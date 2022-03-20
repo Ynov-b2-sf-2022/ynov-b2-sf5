@@ -214,3 +214,138 @@ Ce fichier décrit les différentes actions à effectuer pour bundler le front-e
 // uncomment if you use React
 //.enableReactPreset()
 ```
+
+### Console
+
+La console Symfony est un exécutable PHP contenant de nombreux outils dont on va tirer partie lors des développements.
+
+Par exemple, la console nous permettra de :
+
+- Créer un contrôleur
+- Créer une entité
+- Mettre à jour notre base de données
+- Afficher des informations sur le projet Symfony
+- Explorer le conteneur de services
+- etc...
+
+> On écrira toujours les appels à la console de la façon suivante, depuis la racine du projet : `php bin/console [commande]`. Une commande peut se présenter sous la forme `theme_commande:action_a_exectuer`
+
+### Contrôleurs
+
+Si on lance le serveur juste après l'installation de l'application, nous constatons que nous n'avons aucune page d'accueil. A la place, Symfony prévoit une page d'accueil spéciale indiquant la version de Symfony installée, et un message nous précisant que nous voyons cette page parce que nous n'avons pas configuré de page d'accueil.
+
+En utilisant la console et le `MakerBundle`, nous allons créer le premier contrôleur de notre application, qui sera configuré pour s'exécuter sur la page d'accueil.
+
+```bash
+php bin/console make:controller
+```
+
+On va nommer la classe `IndexController`, puis consulter le contenu du fichier `src/Controller/IndexController.php` créé par le maker.
+
+> Un point sur la classe de contrôleurs : cette classe étend une classe abstraite `AbstractController`, c'est cette classe abstraite qui lui fournit les capacités d'un contrôleur. Par ailleurs, on rappelle qu'avec l'auto-chargement PSR-4, le namespace de notre contrôleur est donc `App\Controller`, puisqu'il se situe dans le dossier `src/Controller`
+
+Dans la classe créée par le maker, on trouve une fonction `index`, qui va renvoyer une `Response`. C'est le principe de base de Symfony : le modèle Requête/Réponse. Un contrôleur est chargé d'être exécuté pour une route donnée (une URL, donc). Il va donc recevoir une requête, puis générer une réponse pour le client ayant effectué la requête.
+
+Au-dessus de la signature de cette fonction, on trouvera une **annotation** `@Route`. C'est grâce à cette annotation que nous pourrons définir l'URL associée à notre route, le nom de la route, les méthodes HTTP autorisées, etc...c'est donc **la méthode** qui représente ici notre contrôleur.
+
+> Avec PHP8, les route peuvent également être écrites sous forme d'[attributs PHP8](https://www.php.net/releases/8.0/en.php#attributes). La syntaxe peut donc être un peu différente
+
+Le rôle de base d'un contrôleur étant de communiquer avec les modèles puis de demander le rendu d'une vue, on trouve l'instruction `$this->render('...', [...]);`.
+
+Ce contrôleur va déclencher le rendu d'un template.
+
+### Templates (Vues) - Twig - Introduction
+
+Dans la version webapp, pour faire une application complète, Symfony fournit Twig comme moteur de templates.
+
+Les 3 éléments de syntaxe Twig à retenir sont les suivants :
+
+- Structure de contrôle ou de langage Twig : `{% %}`
+- Evaluer une expression et afficher le résultat à l'écran : `{{ }}`
+- Inscrire un commentaire dans un template : `{# #}`
+
+Exemple d'un fichier Twig :
+
+```twig
+{# base.html.twig #}
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>{% block title %}Mon super titre{% endblock %}</title>
+    {% block stylesheets %}{% endblock %}
+  </head>
+  <body>
+    {% block body %}{% endblock %}
+    {% block javascripts %}{% endblock %}
+  </body>
+</html>
+```
+
+Dans tout fichier de template, on pourra inclure des instructions Twig pour la compilation du template.
+
+Dans ce premier extrait par exemple, on construit un squelette HTML de base.
+
+Le but est d'avoir un template de base commun pour toutes les pages de notre application.
+
+On définit donc dans notre squelette de base différents **blocs**, que nous allons mettre à disposition des templates enfants pour qu'ils définissent chacun leur propre contenu :
+
+```twig
+{# index/index.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}
+  {# Il est possible de rappeler le contenu du bloc parent avec la fonction parent() #}
+  {{ parent() }} - Hello TestController!
+{% endblock %}
+
+{% block body %}
+
+<div class="example-wrapper">
+  {# On peut afficher la valeur de variables passées par le contrôleur à la vue #}
+  <h1>Hello {{ controller_name }}! ✅</h1>
+</div>
+{% endblock %}
+```
+
+> Les différents blocs définis dans le template parent vont donc prendre le contenu défini dans le template enfant. On pourra donc définir les contenus de chaque page séparément, en gardant une base d'affichage commune (inclusion des CSS et JS de Bootstrap, etc...)
+
+### Entités - Modèles
+
+Pour créer des entités dans notre application, nous allons utiliser le Maker : `php bin/console make:entity`.
+
+L'assistant ligne de commande est plutôt clair et simple à utiliser. Choisissez pour chaque propriété que vous voulez créer son type, sa taille, nullable ou non, etc...
+
+Une fois notre entité terminée, le Maker nous a créé une classe d'entité dans `src/Entity`.
+
+Cette classe contient différents attributs qui deviendront plus tard les colonnes de nos tables. Par ailleurs, l'encapsulation est respectée puisque pour chaque attribut on peut trouver un **getter** et un **setter** associés.
+
+### Mise à jour de la base de données
+
+Nous allons voir 2 manières de mettre à jour la base de données : les migrations et les mises à jour à la volée.
+
+Dans tous les cas, les mises à jour de base de données se font en **2 étapes** : **préparation & revue** du code SQL qui va être exécuté, puis **exécution** de la mise à jour.
+
+> IMPORTANT : Avant de pouvoir effectuer des mises à jour dans la base de données, il faut renseigner l'URL d'accès à la base de données dans le fichier .env.local, qui n'est pas intégré au gestionnaire de versions ([Documentation](https://symfony.com/doc/current/doctrine.html#configuring-the-database))
+
+#### Migrations
+
+Pour générer une migration, on va simplement exécuter la commande suivante du Maker : `php bin/console make:migration`.
+
+Cette commande va comparer le contenu de nos classes d'entités avec le contenu de la structure de la base de données, puis générer une classe de migration dans le dossier `migrations`, contenant le code SQL nécessaire à la synchronisation des 2 côtés (code & BDD).
+
+Une fois la migration générée, on peut aller vérifier dans le fichier généré que le code SQL correspond aux mises à jour que l'on souhaite effectuer.
+
+Une fois le code SQL passé en revue, on peut exécuter la mise à jour, donc exécuter la migration : `php bin/console doctrine:migrations:migrate`.
+
+Dans ce cas, Doctrine prend le relais : il va vérifier les migrations déjà éventuellement exécutées, pour éviter d'exécuter la même 2 fois, et exécuter celles qui doivent l'être.
+
+> L'approche avec migrations pour la base de données est la manière recommandée pour gérer les évolutions de structures. Elle présente l'avantage principal d'être rigoureuse, avec la génération de classes de migrations permettant de cibler précisément et rigoureusement les mises à jour effectuées. Cependant, il faut bien veiller à ne pas s'emmêler les pinceaux dans les différentes mises à jour de structures, et que l'outil de migration s'y retrouve également
+
+#### Mise à jour à la volée
+
+Le fonctionnement est similaire, mais ne génère aucun fichier de migration.
+
+Revue du code qui va être exécuté : `php bin/console doctrine:schema:update --dump-sql`.
+
+Exécution à la volée des mises à jour nécessaires : `php bin/console doctrine:schema:update --force`.
