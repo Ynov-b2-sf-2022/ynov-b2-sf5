@@ -349,3 +349,175 @@ Le fonctionnement est similaire, mais ne génère aucun fichier de migration.
 Revue du code qui va être exécuté : `php bin/console doctrine:schema:update --dump-sql`.
 
 Exécution à la volée des mises à jour nécessaires : `php bin/console doctrine:schema:update --force`.
+
+### Ajout d'une relation OneToMany
+
+Avec un ORM, nous allons réfléchir notre base de données sous forme Objet.
+
+Cela signifie que dans l'exemple que nous réalisons, c'est-à-dire un site d'actualités, nous avons créé une entité `Article`, correspondant à la table `article` de notre base de données.
+
+Nous souhaitons que nos articles aient une catégorie.
+
+En base de données, on sait que ce type de besoin correspond à une association 1-N, avec ajout d'une clé étrangère.
+
+Avec Doctrine, on va donc créer une entité `Category`, mais le but est de pouvoir manipuler nos instances de classes de la manière suivante par exemple : `$category->getArticles();`.
+
+On va donc créer un attribut `articles` dans notre entite `Category`. Mais dans le maker, nous allons pouvoir définir cette propriété comme étant une **relation**, et plus précisément une relation **OneToMany**.
+
+L'assistant va également nous demander si on souhaite créer un nouvel attribut dans `Article`, afin de créer une relation **bi-directionnelle**, nous permettant de récupérer les articles d'une catégorie, et la catégorie d'un article. On confirme la création d'un attribut `category` dans l'entité `Article`.
+
+```php
+class Article
+{
+  //...
+
+  /**
+   * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="articles")
+   * @ORM\JoinColumn(nullable=false)
+   */
+  private $category;
+
+  //...
+
+  public function getCategory(): ?Category
+  {
+      return $this->category;
+  }
+}
+```
+
+```php
+class Category
+{
+  //...
+
+  /**
+   * @ORM\OneToMany(targetEntity=Article::class, mappedBy="category")
+   */
+  private $articles;
+
+  //...
+
+  /**
+   * @return Collection<int, Article>
+   */
+  public function getArticles(): Collection
+  {
+      return $this->articles;
+  }
+}
+```
+
+> Note : l'attribut `articles` est créé et géré du point de vue de Doctrine comme une `ArrayCollection`, une collection d'objets à laquelle on peut enlever/ajouter des éléments
+
+### Fixtures - Les données de tests
+
+Une fois qu'on a nos entités, qu'on a créé notre base de données, on aimerait pouvoir insérer des données de test pour travailler sur un ensemble initial de données lors du développement de notre application.
+
+On va pour cela utiliser les **fixtures**.
+
+On installe la dépendance de développement suivante : `orm-fixtures` (il s'agit de l'alias Flex).
+
+La recette exécutée lors de l'installation a créé un fichier `src/DataFixtures/AppFixtures.php`.
+
+C'est dans ce fichier qu'on va créer nos objets et les enregistrer en base de données.
+
+Notre fichier de fixtures, à la base, ressemble à quelque chose comme ça :
+
+```php
+<?php
+
+namespace App\DataFixtures;
+
+use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Persistence\ObjectManager;
+
+class AppFixtures extends Fixture
+{
+  public function load(ObjectManager $manager)
+  {
+    //...
+
+    $manager->flush();
+  }
+}
+```
+
+Dans la méthode `load` de notre classe, on va donc vouloir instancier toutes les entités qu'on souhaite enregistrer en base de données.
+
+Par exemple :
+
+```php
+<?php
+//...
+public function load(ObjectManager $manager)
+{
+  $article = new Article();
+  $article->setTitle($faker->words($faker->numberBetween(2, 7), true))
+    ->setDate($faker->dateTimeBetween('-2 years'))
+    ->setVisible($faker->boolean(80))
+    ->setContent($faker->realTextBetween(150, 260))
+    ->setCategory($faker->randomElement($categories));
+  $manager->persist($article);
+
+  $manager->flush();
+}
+//...
+```
+
+On peut ensuite générer notre base de tests avec la commande suivante : `php bin/console doctrine:fixtures:load`
+
+#### Séparer ses fixtures dans plusieurs fichiers
+
+La [documentation](https://symfony.com/bundles/DoctrineFixturesBundle/current/index.html#splitting-fixtures-into-separate-files) nous indique qu'on peut également séparer les fixtures dans plusieurs fichiers.
+
+Dans ce dépôt Git, jetez un oeil à la branche `fixtures-multiple-files` pour en avoir un aperçu.
+
+### La persistance des entités
+
+Dans l'extrait de code ci-dessus, reprenons les différentes étapes empruntées afin de pouvoir sauvegarder une entité en base de données :
+
+- On instancie un nouvel objet de type `Article`
+- On utilise l'interface fluide pour assigner des valeurs à ses différents attributs, via les setters
+- On **persiste** l'entité
+- On `flush` les changements effectués pour qu'ils soient exécutés en base de données
+
+Lorsqu'on va vouloir créer un nouvel enregistrement en base de données, on va devoir passer par ces étapes. Et particulièrement l'étape de **persistance**.
+
+> L'étape de persistance, c'est-à-dire l'appel à la méthode `persist` de votre gestionnaire d'entités, est indispensable. Il permet tout simplement, après la création d'un objet, de **dire à votre gestionnaire que vous souhaitez qu'il gère cette entité**. Vu qu'elle n'existe pas encore (on vient de la créer manuellement, dans le code, on ne l'a pas récupérée d'une source de données existante), elle sera donc persistée, c'est-à-dire créée en base de données, lorsque vous exécuterez la méthode `flush` du gestionnaire
+
+---
+
+> L'appel à la méthode `flush` permet de **pousser** vers la base de données tous les changements que vous avez demandés à votre gestionnaire d'entités. Pour notre exemple, il s'agit, après avoir demandé à notre gestionnaire de gérer l'entité, de l'insérer de manière concrète dans la base de données, donc d'exécuter le code SQL nécessaire à son insertion. Ceci nous permet de pouvoir demander plusieurs opérations à notre gestionnaire (insertion, modification, suppression), puis d'effectuer un seul appel à `flush` pour regrouper toutes les requêtes. Ce serait trop lourd si on devait exécuter une requête à chaque fois qu'on demandait quelque chose au gestionnaire
+
+Ainsi, nous pouvons donc créer plusieurs catégories, plusieurs articles, les persister, puis demander à Doctrine de les insérer :
+
+```php
+<?php
+//...
+public function load(ObjectManager $manager)
+{
+  $categories = [];
+
+  for ($i = 0; $i < 25; $i++) {
+      $category = new Category();
+      $category->setName($faker->words(2, true));
+      $manager->persist($category);
+      $categories[] = $category;
+  }
+
+  for ($i = 0; $i < 250; $i++) {
+      $article = new Article();
+      $article->setTitle($faker->sentence(5))
+          ->setDate($faker->dateTimeBetween('-2 years'))
+          ->setVisible($faker->boolean(80))
+          ->setContent($faker->realTextBetween(150, 280))
+          ->setCategory($faker->randomElement($categories));
+
+      $manager->persist($article);
+  }
+
+  $manager->flush();
+}
+//...
+```
