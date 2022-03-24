@@ -471,7 +471,11 @@ On peut ensuite générer notre base de tests avec la commande suivante : `php b
 
 La [documentation](https://symfony.com/bundles/DoctrineFixturesBundle/current/index.html#splitting-fixtures-into-separate-files) nous indique qu'on peut également séparer les fixtures dans plusieurs fichiers.
 
-Dans ce dépôt Git, jetez un oeil à la branche `fixtures-multiple-files` pour en avoir un aperçu.
+Nous pouvons donc créer 2 fichiers distincts `ArticleFixtures` et `CategoryFixtures` avec la création des objets relatifs à chaque entité, une par une.
+
+Par la suite, nous pouvons également déclarer qu'un fichier de fixtures est **dépendant** d'un autre à l'aide de l'interface `DependentFixtureInterface`. On pourra donc charger toutes les catégories avant tous les articles, afin de pouvoir relier les articles à des catégories existantes.
+
+Du côté des catégories, on va créer des **références** qu'on pourra ensuite récupérer du côté des articles.
 
 ### La persistance des entités
 
