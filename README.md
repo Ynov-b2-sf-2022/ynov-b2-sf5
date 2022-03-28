@@ -310,6 +310,18 @@ On définit donc dans notre squelette de base différents **blocs**, que nous al
 
 > Les différents blocs définis dans le template parent vont donc prendre le contenu défini dans le template enfant. On pourra donc définir les contenus de chaque page séparément, en gardant une base d'affichage commune (inclusion des CSS et JS de Bootstrap, etc...)
 
+### Base de données
+
+On va renseigner dans un ficher de variables d'environnement les coordonnées d'accès à la base de données, via la variable `DATABASE_URL`.
+
+> IMPORTANT : Avant de pouvoir effectuer des mises à jour dans la base de données, il faut renseigner l'URL d'accès à la base de données dans le fichier .env.local, qui n'est pas intégré au gestionnaire de versions ([Documentation](https://symfony.com/doc/current/doctrine.html#configuring-the-database))
+
+Par la suite, on va pouvoir demander à Doctrine de créer la base de données pour nous avec la commande suivante :
+
+```bash
+php bin/console doctrine:database:create
+```
+
 ### Entités - Modèles
 
 Pour créer des entités dans notre application, nous allons utiliser le Maker : `php bin/console make:entity`.
