@@ -3,14 +3,23 @@
 {% block title %}Catégories{% endblock %}
 
 {% block body %}
-<ul>
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
     {% for category in categories %}
-        <li>
-            <a href="{{ path('category_item', {'id': category.id}) }}">{{ category.name }}</a>
-             ({{ category.articles|length }} articles)
-        </li>
+    <div class="col">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title display-5">
+                    {{ category.name }}
+                </h5>
+                <p class="card-text">
+                    {{ category.articles|length }} articles
+                </p>
+                <a href="{{ path('category_item', {'id': category.id}) }}" class="btn btn-primary">Voir</a>
+            </div>
+        </div>
+    </div>
     {% else %}
-        <li>Aucune catégorie trouvée</li>
+        <div>Aucune catégorie trouvée</div>
     {% endfor %}
-</ul>
+</div>
 {% endblock %}

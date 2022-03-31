@@ -1,14 +1,17 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Catégorie{% endblock %}
+{% block title %}Catégorie - {{ category.name }}{% endblock %}
 
 {% block body %}
-  <h1>{{ category.name }}</h1>
-  <p>{{ category.articles|length }} articles</p>
+  <h1 class="display-1">{{ category.name }}</h1>
+  <p class="d-flex align-items-center gap-4">
+    <span class="fs-4 fst-italic text-primary">{{ category.articles|length }} articles</span>
+    <a href="{{ path('categories_list') }}" class="btn btn-dark">Retour à la liste</a>
+  </p>
 
-  <ul>
+  <ul class="list-group">
     {% for article in category.articles %}
-      <li>{{ article.title }}</li>
+      <li class="list-group-item">{{ article.title }}</li>
     {% endfor %}
   </ul>
 {% endblock %}
