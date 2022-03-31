@@ -6,7 +6,8 @@
 <ul>
     {% for category in categories %}
         <li>
-            {{ category.name }} ({{ category.articles|length }} articles)
+            <a href="{{ path('category_item', {'id': category.id}) }}">{{ category.name }}</a>
+             ({{ category.articles|length }} articles)
         </li>
     {% else %}
         <li>Aucune catégorie trouvée</li>
