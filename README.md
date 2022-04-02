@@ -744,3 +744,149 @@ Deux nouveaux éléments ici :
 
 - la structure `for` de Twig intègre également un élément `else` permettant de définir un affichage si aucun élément n'a été trouvé dans la liste
 - On peut utiliser les [**filtres**](https://twig.symfony.com/doc/3.x/filters/index.html) avec Twig : avec l'opérateur `|`, on applique un filtre sur un élément (une variable par exemple). Dans notre cas, sur la collection d'articles de chaque catégorie, on affiche simplement la longueur de cette collection avec le filtre `length`
+
+### Récupérer et afficher un élément de la base de données
+
+Si nous souhaitons réaliser la page d'une catégorie par exemple, la première problématique va être la suivante : comment récupérer la bonne catégorie ?
+
+#### Première piste - Injecter la requête dans le contrôleur
+
+Symfony possède une classe `Request` que nous pouvons type-hinter dans n'importe quel contrôleur. Une fois que nous disposons d'une instance de la classe `Request`, nous pouvons accéder à diverses informations concernant la requête effectuée.
+
+Par exemple, ici, nous aimerions récupérer un paramètre GET `id` :
+
+```php
+/**
+  * @Route("/category", name="category_item")
+  */
+public function item(Request $request): Response
+{
+  $id = $request->query->getInt('id');
+
+  return $this->render('category/item.html.twig', [
+    'id' => $id
+  ]);
+}
+```
+
+On utilise l'attribut `query`, qui contient tous les paramètres GET de la requête.
+
+On pourrait donc, une fois qu'on a récupéré l'ID de la catégorie qu'on souhaite afficher, injecter notre `CategoryRepository` dans notre contrôleur afin de récupérer l'entité en question :
+
+```php
+/**
+  * @Route("/category", name="category_item")
+  */
+public function item(Request $request, CategoryRepository $repo): Response
+{
+  $id = $request->query->getInt('id');
+  $category = $repo->find($id);
+
+  return $this->render('category/item.html.twig', [
+    'category' => $category
+  ]);
+}
+```
+
+Bien que cette solution soit valide techniquement, elle ne sera pas convenable. En effet, nous aimerions par exemple disposer d'URL mieux formées, type `/category/56` au lieu de `/category?id=56`.
+
+Pour ce faire, nous allons commencer par modifier l'URL de notre route, dans l'annotation, pour lui ajouter un **paramètre d'URL** :
+
+```php
+/**
+  * @Route("/category/{id}", name="category_item")
+  */
+public function item(CategoryRepository $repo, int $id = 0): Response
+{
+  $category = $repo->find($id);
+
+  return $this->render('category/item.html.twig', [
+    'category' => $category
+  ]);
+}
+```
+
+Ici, nous avons ajouté dans l'annotation de route un paramètre d'URL : id.
+
+Mais nous voyons que tout paramètre d'URL peut être mappé en tant que paramètre de notre contrôleur. Nous avons également ajouté un paramètre à notre méthode, de type `int`.
+
+Nous n'avons donc plus besoin de l'objet `Request` pour récupérer notre ID passé en paramètre d'URL, et nous pouvons directement utiliser notre repository pour récupérer la catégorie.
+
+Symfony nous permet donc de déclarer un paramètre d'URL et de le récupérer directement en paramètre du contrôleur.
+
+Ceci dit, Symfony nous donne la possibilité de faire encore plus simple et plus efficace.
+
+#### Solution - le ParamConverter
+
+En réalité, avec Symfony, il est possible de déclarer notre route, y intégrer un paramètre d'URL comme `id`, puis de **type-hinter** directement le type de l'entité attendue pour que l'objet correspondant soit injecté dans notre contrôleur :
+
+```php
+/**
+ * @Route("/category/{id}", name="category_item")
+ */
+public function item(Category $category): Response
+{
+  return $this->render('category/item.html.twig', [
+    'category' => $category
+  ]);
+}
+```
+
+Ici, que se passe-t-il concrètement ?
+
+- Symfony est capable, avec le routeur, d'identifier le paramètre d'URL `id`
+- A la lecture du type-hint `Category`, il comprend que nous souhaitons récupérer un élément de la base de données
+- Il exécute donc le **ParamConverter** de Doctrine, qui permet de récupérer un élément de la base de données à partir d'un paramètre d'URL
+- Notre paramètre d'URL s'appelle `id` : Doctrine va donc chercher une `Category` qui a cet `id` (note : on aurait également pu passer un paramètre dont le nom correspond à un autre champ de `Category`, c'est comme ça que ça fonctionne)
+- Si un enregistrement est trouvé, alors il est injecté dans le contrôleur
+- Sinon, une erreur 404 est générée
+
+Nous avons donc considérablement réduit la quantité de code nécessaire pour récupérer notre categorie, rendu notre contrôleur plus clair, notre URL plus lisible, et nous générons à présent une erreur 404 lorsque l'enregistrement n'est pas trouvé, ce qui est plus rigoureux que le comportement précédent qui pouvait transmettre une catégorie `null` à notre template.
+
+> Le ParamConverter permet de récupérer un élément automatiquement, selon une certaine logique, à partir d'un paramètre d'URL, et de l'injecter automatiquement dans le contrôleur
+
+### Séparation des templates et inclusion
+
+Revenons à nos templates Twig.
+
+Au lieu d'écrire tout le contenu dans un seul template, nous pouvons séparer des bouts de templates et les importer (inclure) dans d'autres templates.
+
+Exemple pour notre liste de catégories. Nous pouvons tout à fait séparer le code qui génère la "card" Bootstrap :
+
+```twig
+{# templates/category/card.html.twig #}
+<div class="card">
+  <div class="card-body">
+    <h5 class="card-title display-5">
+      {{ category.name }}
+    </h5>
+    <p class="card-text">
+      {{ category.articles|length }} articles
+    </p>
+    <a href="{{ path('category_item', {'id': category.id}) }}" class="btn btn-primary">Voir</a>
+  </div>
+</div>
+```
+
+Et ensuite, l'inclure pour chaque catégorie qu'on souhaite afficher, dans la page de liste. Pour ce faire, on va utiliser la méthode `include` de Twig :
+
+```twig
+{# templates/index/index.html.twig #}
+{# ... #}
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+  {% for category in categories %}
+  <div class="col">
+    {% include 'category/card.html.twig' with {'category': category} %}
+  </div>
+  {% else %}
+    <div>Aucune catégorie trouvée</div>
+  {% endfor %}
+</div>
+{# ... #}
+```
+
+> Attention au chemin vers le template, il est toujours relatif à votre dossier racine de templates, défini dans la configuration du package Twig (ici `templates/`)
+
+Nous injectons dans le template inclus la variable `category` qui y sera consommée.
+
+Nous pouvons donc réaliser notre barre de navigation de la même façon, par exemple : un template isolé représentant la barre de menu, puis dans le layout principal (fichier `base.html.twig`), une directive `include` permettant à Twig d'inclure ce template dans le fichier de base.
