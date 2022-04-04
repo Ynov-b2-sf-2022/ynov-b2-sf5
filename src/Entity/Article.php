@@ -10,6 +10,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Article
 {
+    public const NB_HOME = 10;
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue

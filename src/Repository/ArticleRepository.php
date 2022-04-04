@@ -22,6 +22,18 @@ class ArticleRepository extends ServiceEntityRepository
     }
 
     /**
+     * @return Article[]
+     */
+    public function findLast(int $number)
+    {
+        $qb = $this->createQueryBuilder('a')
+            ->orderBy('a.date', 'DESC')
+            ->setMaxResults($number);
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
      * @throws ORMException
      * @throws OptimisticLockException
      */
