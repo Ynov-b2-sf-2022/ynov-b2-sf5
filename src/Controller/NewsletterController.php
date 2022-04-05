@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Entity\Newsletter;
 use App\Form\NewsletterType;
-use App\Repository\NewsletterRepository;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -27,6 +26,8 @@ class NewsletterController extends AbstractController
             $newsletter->setCreated(new DateTime());
             $em->persist($newsletter);
             $em->flush();
+            $this->addFlash('success', 'Votre email a été enregistré, merci');
+            return $this->redirectToRoute('app_index');
         }
 
         return $this->renderForm('newsletter/register.html.twig', [
