@@ -892,3 +892,279 @@ Et ensuite, l'inclure pour chaque catégorie qu'on souhaite afficher, dans la pa
 Nous injectons dans le template inclus la variable `category` qui y sera consommée.
 
 Nous pouvons donc réaliser notre barre de navigation de la même façon, par exemple : un template isolé représentant la barre de menu, puis dans le layout principal (fichier `base.html.twig`), une directive `include` permettant à Twig d'inclure ce template dans le fichier de base.
+
+### Formulaires
+
+La construction et la gestion d'un formulaire avec Symfony s'effectue en plusieurs étapes :
+
+- Construction du formulaire à partir d'une classe
+- Création du formulaire dans le contrôleur
+- Gestion du formulaire dans le contrôleur
+- Validation des données du formulaire
+- Passage du formulaire à la vue, avec lequel Twig pourra afficher les champs du formulaire
+
+#### Construction du formulaire
+
+Le premier exemple que nous avons pris concernait la création d'une newsletter.
+
+Le but est de pouvoir présenter un formulaire simple, contenant un seul champ `email`, et permettant d'enregistrer une adresse dans une table `Newsletter`.
+
+> On va donc prendre soin de créer en premier lieu l'entité chargée de recevoir ces données, puis de mettre à jour le schéma de la base de données comme vu précédemment
+
+Pour créer un formulaire dans notre projet, on peut utiliser le `MakerBundle` :
+
+```bash
+php bin/console make:form
+```
+
+> On peut lier notre formulaire à une entité ou non, le maker nous demande si on souhaite le faire. Dans notre exemple, c'est le cas, il s'agit de l'entité `Newsletter`
+
+Le maker nous génère une classe dans le dossier `src/Form`. On constate donc que nos classes de formulaires seront bien séparées du reste du code, dans un namespace `App\Form`.
+
+> On suffixe les noms des classes de formulaire par `Type`, car dans Symfony tout est ce qu'on appelle un "form type" : les formulaires, les champs, etc...c'est plus pratique pour composer et intégrer des formulaires
+
+Dans cette classe, on retrouve une méthode essentielle : `buildForm`. C'est dans cette méthode que nous allons déclarer les différents champs de notre formulaire, et leurs propriétés :
+
+```php
+//...
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+//...
+
+class NewsletterType extends AbstractType
+{
+  public function buildForm(FormBuilderInterface $builder, array $options)
+  {
+      $builder
+          ->add('email', EmailType::class)
+          ->add("S'inscrire", SubmitType::class)
+      ;
+  }
+  // ...configureOptions, liaison du formulaire à la classe d'entité
+}
+```
+
+On peut noter plusieurs choses dans la méthode `buildForm` :
+
+- On peut utiliser l'interface fluide du type `FormBuilderInterface` pour chaîner les appels à la méthode `add`
+- Chaque champ déclaré possède un `Type` lui-même : `EmailType`, `SubmitType` dans ce cas
+- Les classes `EmailType`, `SubmitType` sont bien issues du composant `Form` de Symfony, il faut veiller à `use` les classes du bon namespace
+- On constate que par défaut, un formulaire ne va pas générer lui-même un bouton de soumission. C'est à nous, à la construction du formulaire, d'ajouter un champ de type `SubmitType`
+
+> Les classes `***Type` appliquées aux différents champs de notre formulaire vont permettre d'afficher correctement les champs dans le rendu Twig !
+
+#### Création du formulaire
+
+Une fois que nous disposons de notre classe `NewsletterType`, qui représente la structure de notre formulaire, nous pouvons alors construire notre formulaire dans notre contrôleur :
+
+```php
+// Dans la méthode de contrôleur
+$newsletter = new Newsletter();
+$form = $this->createForm(NewsletterType::class, $newsletter);
+```
+
+La méthode `createForm` est utilisable dans toute méthode d'une classe héritant de la classe abstraite `AbstractController`.
+
+Le but ici est de créer une entité vide, ainsi que le formulaire qui va être relié à cette entité.
+
+Avec la méthode `createForm`, nous spécifions le type de formulaire que nous souhaitons récupérer, et l'entité qu'il faut lier à ce formulaire.
+
+#### Gestion du formulaire
+
+Une fois le formulaire créé, on peut gérer les données éventuellement saisies :
+
+```diff
+$newsletter = new Newsletter();
+$form = $this->createForm(NewsletterType::class, $newsletter);
+
++$form->handleRequest($request);
+```
+
+Pour assurer la gestion du formulaire, on va exécuter une méthode `handleRequest` et lui passer en paramètre la **requête entrante**.
+
+> Pour récupérer la requête entrante, on peut type-hinter le type `Request` du composant `HttpFoundation` de Symfony dans les paramètres de notre contrôleur
+
+Cette méthode `handleRequest` va explorer toute seule le contenu des variables POST. Si elle trouve des informations correspondant à la structure de notre formulaire, elle va alors être capable de les récupérer et les mapper directement dans l'entité !
+
+#### Validation des données
+
+Une fois les données récupérées et mappées, il faut s'assurer qu'elles sont **valides**.
+
+Cette responsabilité ne relève pas du composant `Form` de Symfony mais du composant `Validator`.
+
+On va pouvoir simplement appeler, depuis le formulaire, 2 méthodes : `isSubmitted` et `isValid`, pour s'assurer que le formulaire a bien été soumis par l'utilisateur, puis que les données sont valides :
+
+```php
+//...
+$form->handleRequest($request);
+
+if ($form->isSubmitted() && $form->isValid()) {
+  // Si tout va bien, alors on peut persister l'entité et valider les modifications en BDD
+  $em->persist($newsletter);
+  $em->flush();
+}
+```
+
+Mais pour pouvoir valider les données correctement, il faut qu'on spécifie un format de validation sur nos différents champs.
+
+Par exemple, comment signifier à mon composant `Validator` que le champ `email` de mon entité `Newsletter` doit accepter des chaînes de caractère qui ont le format d'un email ?
+
+On peut poser des **contraintes de validation** directement au niveau de l'entité :
+
+```php
+//...
+use Symfony\Component\Validator\Constraints as Assert;
+//...
+class Newsletter
+{
+  /**
+   * @ORM\Column(type="string", length=255)
+   * @Assert\Email
+   * @Assert\NotBlank
+   */
+  private $email;
+
+  //...
+}
+```
+
+> Les contraintes de validation peuvent s'appliquer sous forme d'annotation au niveau des attributs de l'entité
+
+Pour retrouver toutes les containres de validation disponibles dans Symfony, on peut consulter [cette page](https://symfony.com/doc/5.4/reference/constraints.html).
+
+> Attention à sélectionner la bonne version de Symfony quand vous consultez la documentation. Je vous rappelle que nous utilisons ici la version 5.4, mais la dernière version majeure de Symfony est la version 6. Cela signifie que certaines choses peuvent avoir changé entre la version 5 et la version 6. Par défaut la documentation s'affiche dans la dernière version
+
+Avec l'application de contraintes de validation dans les champs de nos entités, le composant `Validator` peut détecter et remonter les erreurs de format dans le formulaire.
+
+#### Au sujet de la persistance des données
+
+Nous avons vu dans le point précédent qu'une fois qu'un formulaire a été validé, nous pouvons persister l'entité puis `flush`.
+
+Pour faire ça, nous avons utilisé une variable `$em`.
+
+Cette variable est en fait injectée directement dans le contrôleur sous forme de paramètre.
+
+Pour expliquer sommairement le fonctionnement de cette injection, nous devons parler de nouveau du système d'injection de dépendances dans Symfony.
+
+Pour injecter un service dans un contrôleur par exemple, nous avons vu que nous pouvions utiliser les **type-hints**.
+
+Quand on utilise un type-hint, Symfony recherche le service correspondant (la classe) dans le **container de services**.
+
+Ainsi, s'il trouve un service, il peut injecter une instance de celui-ci là où nous en avons besoin.
+
+Cependant, les services qui peuvent être injectés par un type-hint doivent être **autowirés**.
+
+> Pour résumer, un service **autowiré**, qui utilise donc l'**autowiring** de Symfony, peut donc être type-hinté dans une méthode de contrôleur, pour notre exemple. Nous verrons plus tard que nous pouvons également type-hinter un service dans le constructeur d'une classe
+
+La question à se poser est donc la suivante : pour pouvoir communiquer avec ma base de données, quel type de classe vais-je pouvoir type-hinter dans les paramètres de mon contrôleur ?
+
+Avec la console de Symfony, nous pouvons explorer les services autowirés.
+
+Ici, nous voulons un `entity manager`, un gestionnaire d'entités.
+
+Nous allons utiliser la commande `debug:autowiring`. Nous pouvons lui passer un argument de recherche pour qu'il affiche le ou les types correspondants :
+
+```bash
+php bin/console debug:autowiring entitymanager
+```
+
+Et en sortie, Symfony nous affiche :
+
+```bash
+Autowirable Types
+=================
+
+ The following classes & interfaces can be used as type-hints when autowiring:
+ (only showing classes/interfaces matching entitymanager)
+
+ EntityManager interface
+ Doctrine\ORM\EntityManagerInterface (doctrine.orm.default_entity_manager)
+```
+
+Nous allons donc pouvoir type-hinter l'interface `EntityManagerInterface` du package Doctrine :
+
+```php
+public function index(
+  Request $request,
+  EntityManagerInterface $em
+): Response {
+  $newsletter = new Newsletter();
+  $form = $this->createForm(NewsletterType::class, $newsletter);
+
+  $form->handleRequest($request);
+
+  if ($form->isSubmitted() && $form->isValid()) {
+    $em->persist($newsletter);
+    $em->flush();
+  }
+  //...
+}
+```
+
+Au passage, nous retrouvons notre autre type-hint, `Request`.
+
+Le rôle du container de services est donc d'identifier nos type-hints et nous fournir les services correspondants.
+
+> Nous ne détaillerons pas dans ce module la raison pour laquelle nous devons injecter une interface et non une classe pour l'entity manager
+
+Dans notre application, la configuration par défaut rend tous nos services autowirés. C'est pourquoi nous pouvons injecter nos repositories directement dans nos contrôleurs, sans configurer manuellement quoi que ce soit.
+
+> Note : depuis la version 5 de Symfony, les repositories automatiquement créés par Symfony lorsqu'on crée une entité incluent une méthode `add` et une méthode `remove` permettant d'effectuer automatiquement un `persist` sur une entité, et, si besoin, un `flush`. On aurait donc également pu type-hinter notre `NewsletterRepository` afin de persister l'entité depuis le formulaire. L'exemple avec `EntityManagerInterface` est une alternative nous permettant d'évoquer le sujet de l'autowiring, tout simplement
+
+#### Affichage du formulaire dans un template Twig
+
+Pour afficher notre formulaire, il faut que notre contrôleur transmette un objet `FormView` à notre vue. En réalité, si nous utilisons la méthode `renderForm` dans un contrôleur, Symfony se chargera automatiquement de créer l'objet :
+
+```diff
+public function index(Request $request, EntityManagerInterface $em): Response
+{
+  $newsletter = new Newsletter();
+  $form = $this->createForm(NewsletterType::class, $newsletter);
+
+  $form->handleRequest($request);
+
+  if ($form->isSubmitted() && $form->isValid()) {
+    $newsletter->setCreated(new DateTime());
+    $em->persist($newsletter);
+    $em->flush();
+  }
+
++ return $this->renderForm('newsletter/register.html.twig', [
++   'form' => $form
++ ]);
+}
+```
+
+Ensuite, dans la vue, on peut afficher le formulaire avec les méthodes Twig disponibles.
+
+La plus basique est la méthode `form` :
+
+```twig
+{{ form(form) }}
+```
+
+Cette méthode va simplement générer le code HTML pour **tout** le formulaire.
+
+Si on veut avoir plus de contrôle sur la manière d'afficher notre formulaire, on peut utiliser les [méthodes personnalisées](https://symfony.com/doc/5.4/form/form_customization.html) également à disposition.
+
+Vous trouverez sur cette page toutes les méthodes d'extension Twig créées par Symfony pour afficher un libellé de champ, un champ seul, etc...ceci peut vous permettre d'avoir plus de contrôle sur la façon dont vous souhaitez afficher votre formulaire.
+
+#### Appliquer un thème au formulaire
+
+On peut utiliser différents thèmes fournis par Symfony. Dans notre cas, vu qu'on utilise Bootstrap, on peut indiquer à Twig d'utiliser le thème correspondant.
+
+Ainsi, dans la configuration du package Twig (`config/packages/twig.yaml`) :
+
+```yaml
+twig:
+  # ...
+  form_themes: ["bootstrap_5_layout.html.twig"]
+```
+
+Avant l'application du thème :
+
+![Avant thème Bootstrap](docs/form_avant_bootstrap.png "Avant thème Bootstrap")
+
+Après l'application du thème :
+
+![Après thème Bootstrap](docs/form_apres_bootstrap.png "Après thème Bootstrap")
