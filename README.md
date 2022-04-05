@@ -282,6 +282,8 @@ Exemple d'un fichier Twig :
 </html>
 ```
 
+> Note : par défaut, Symfony crée le fichier `base.html.twig` avec des références à Webpack Encore, en intégrant dans les blocks `stylesheets` et `javascripts` des fonctions comme `encore_entry_link_tags` ou `encore_entry_script_tags`. **Vous pouvez supprimer ces lignes pour le moment**, sinon au premier lancement de votre projet vous aurez une erreur
+
 Dans tout fichier de template, on pourra inclure des instructions Twig pour la compilation du template.
 
 Dans ce premier extrait par exemple, on construit un squelette HTML de base.
