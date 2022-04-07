@@ -1,0 +1,1277 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>README.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<h1 id="b2---symfony">B2 - Symfony</h1>
+<h2 id="composer">Composer</h2>
+<h3 id="d%C3%A9pendances">Dépendances</h3>
+<p>Composer est un gestionnaire de dépendances nous permettant de déclarer les packages externes à notre application, que l'on souhaite utiliser.</p>
+<p>On peut utiliser Composer pour créer notre application Symfony, par exemple.</p>
+<p>On peut également utiliser Composer pour importer une dépendance isolée (un composant Symfony seul par exemple).</p>
+<h3 id="autoloading">Autoloading</h3>
+<p>Composer peut également nous permettre de gérer la manière dont on va charger les classes de notre application.</p>
+<p>Par exemple, si on souhaite utiliser <a href="https://www.php-fig.org/psr/psr-4/"><code>PSR-4</code></a>, on peut lui indiquer.</p>
+<blockquote>
+<p>composer.json</p>
+</blockquote>
+<p>On vient fixer ici le fait que le namespace &quot;App&quot; correspond au dossier &quot;src/&quot; de notre application.</p>
+<p>Ainsi, il agira comme un espace de nom &quot;racine&quot; et suivra l'arborescence de notre application.</p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"autoload"</span>: {
+    <span class="hljs-attr">"psr-4"</span>: {
+      <span class="hljs-attr">"App\\"</span>: <span class="hljs-string">"src/"</span>
+    }
+  }
+}
+</div></code></pre>
+<h3 id="versioning">Versioning</h3>
+<p>On trouvera une stratégie de versioning <a href="https://devhints.io/semver"><code>semver</code></a> pour les packages en PHP.</p>
+<p>Le versioning <code>semver</code> est divisé en 3 parties. De gauche à droite :</p>
+<ul>
+<li>Version majeure (<em>Cette version introduit des changements significatifs par rapport à la version précédente, certaines fonctionnalités qui précédaient sont supprimées par exemple</em>)</li>
+<li>Version mineure (<em>On peut introduire de nouvelles choses dans une version mineure par exemple, en s'assurant que tout ce qui existe déjà continue de fonctionner</em>)</li>
+<li>Version de patch (<em>Correctifs de bugs et sécurité</em>)</li>
+</ul>
+<p>Les packages Composer se trouvent pour leur grande majorité sur <a href="https://packagist.org/">packagist.org</a>.</p>
+<h2 id="symfony">Symfony</h2>
+<p>Comme indiqué sur <a href="https://symfony.com/">la page d'accueil</a>, Symfony est avant tout <strong>un ensemble de composants PHP réutilisables</strong>.</p>
+<p>Le framework Symfony en lui-même vient rassembler plusieurs dizaines de ces composants, dans une structure (arborescence) précise. On construit ensuite notre application dans cette structure.</p>
+<h3 id="versions">Versions</h3>
+<p>Symfony adopte également le système de versioning <code>semver</code>, et présente une nouvelle version majeure tous les 2 ans.</p>
+<p>Pendant ces 2 années, on aura 5 versions mineures : de 0 à 4.</p>
+<p>La version mineure n°4 sera donc la dernière sous-version d'une version majeure (3.4, 4.4, etc...), et elle sortira en même temps que la version majeure suivante.</p>
+<p>Ainsi, les versions 3.4, 4.4, etc...sont appelées des versions <strong>LTS</strong> ou Long-Term Support : un support sur la correction de bug et de failles de sécurité est assuré sur ces versions pendant 3 ans pour les corrections de bugs et 4 ans pour les failles de sécurité.</p>
+<h3 id="installation-en-version-54-lts">Installation en version 5.4 LTS</h3>
+<p>Pour installer un projet Symfony avec la version 5.4, donc la LTS, on va utiliser le <a href="https://symfony.com/download">binaire de Symfony</a> (ou Symfony CLI) :</p>
+<pre class="hljs"><code><div>symfony new my_project_directory --version=5.4 --webapp
+</div></code></pre>
+<blockquote>
+<p>Note : on peut créer 2 types d'application Symfony : des applications destinées à la création de microservices, API, ou applications console par exemple, et des applications web complètes, incluant un moteur de template (Twig). Dans ce cas, on ajoute l'option <code>--webapp</code> à l'instruction de ligne de commande permettant de créer l'application. La base d'installation reste la même (package Composer <code>symfony/skeleton</code>)</p>
+</blockquote>
+<p>A l'exécution de cette commande, on verra défiler les différents composants issus de packagist.org, qui sont intégrés automatiquement par le framework dans nos dépendances.</p>
+<h3 id="environnements">Environnements</h3>
+<p>Dans une application Symfony, l'environnement par défaut dans lequel nous allons travailler est <code>dev</code>, par défaut.</p>
+<p>L'environnement se présentera sous forme d'une variable d'environnement <code>APP_ENV</code>.</p>
+<p>Il y a 3 environnements prévus par Symfony par défaut : <code>dev</code>, pour la phase de développement, <code>test</code> pour les tests unitaires, fonctionnels, etc... et <code>prod</code> pour le déploiement en production, qui nous permet d'optimiser la configuration de l'application pour qu'elle soit plus rapide.</p>
+<h3 id="arborescence">Arborescence</h3>
+<h4 id="assets"><code>/assets</code></h4>
+<p>Ce dossier contient des fichiers Javascript qui composeront la partie front-end, donc l'interface, si nous utilisons l'outil <strong>Webpack Encore</strong> fourni par Symfony.</p>
+<p>Webpack Encore permet de développer des interfaces modulaires avec Javascript et le <strong>bundler</strong> <a href="https://v4.webpack.js.org/">Webpack</a>.</p>
+<h4 id="bin"><code>/bin</code></h4>
+<p>Ce dossier contient 1 fichier qui va être très important : <code>console</code>. La console Symfony (<strong>différente de l'outil Symfony CLI</strong>) nous fournira des commandes utilitaires permettant de générer des fichiers au sein de notre arborescence, accélérant le développement de notre application, mais aussi garantissant une meilleure constance dans le style du code : la génération via des templates s'effectue toujours de la même façon, nous aurons uniquement à ajouter le code propre à notre application.</p>
+<h4 id="config"><code>/config</code></h4>
+<p>Ce dossier, comme son nom le laisse facilement deviner, contient les fichiers de configuration des différents packages utilisés dans l'application.</p>
+<p>Les fichiers de configuration utilisent le format <a href="https://fr.wikipedia.org/wiki/YAML"><code>yaml</code></a>, basé sur l'indentation des différentes sections.</p>
+<p>Se trouvent également 2 fichiers <code>bundles.php</code>, regroupant les composants applicatifs que l'on souhaite activer dans notre application, selon l'environnement, et <code>preload.php</code> pour le preloading introduit par PHP 7.4 pour le pré-chargement de scripts.</p>
+<h4 id="migrations"><code>/migrations</code></h4>
+<p>Les migrations contiendront des classes PHP décrivant les changements de structure de notre base de données, quand nous travaillerons avec une BDD.</p>
+<h4 id="public"><code>/public</code></h4>
+<p>Ce dossier contient uniquement un fichier <code>index.php</code>, qui va être le point d'entrée de notre application.</p>
+<h4 id="src"><code>/src</code></h4>
+<p>Dans ce dossier, on retrouvera les classes de notre application.</p>
+<p>On va avoir par exemple le dossier <code>Controllers</code> dans lequel se trouveront toutes les classes de contrôleurs permettant de gérer la navigation et le routage dans notre application.</p>
+<p>Les entités (donc le modèle) se trouveront elles dans le dossier <code>Entity</code>.</p>
+<p>Les repositories, dans le dossier <code>Repository</code>, seront notre couche de services, permettant de requêter nos modèles.</p>
+<p>Nous n'aurons pas à toucher le fichier <code>Kernel.php</code>, c'est le noyau de Symfony.</p>
+<h4 id="templates"><code>/templates</code></h4>
+<p>Ce dossier contiendra tous nos templates, écrits avec <code>Twig</code>, un moteur de template que nous verrons plus tard.</p>
+<h4 id="translations"><code>/translations</code></h4>
+<p>Ce dossier contiendra des fichiers de traduction, si nous voulons travailler sur une application présentant des libellés multilingues, ou encore chaînes localisées.</p>
+<h4 id="var"><code>/var</code></h4>
+<p>Ce dossier est destiné à recevoir des données de caches et de logs, il n'est pas intégré au gestionnaire de versions si on en utilise un.</p>
+<p>On trouvera par exemple les fichiers issus de la compilation du conteneur applicatif, dans le dossier <code>cache</code>.</p>
+<h4 id="vendor"><code>/vendor</code></h4>
+<p>Le dossier <code>/vendor</code> est géré par Composer, pour y inscrire la méthode d'autoloading ainsi que les sources des dépendances utilisées dans l'application.</p>
+<p>On remarquera qu'il n'est pas versionné.</p>
+<p>En effet, ce dossier est <strong>entièrement</strong> géré par Composer. Ainsi, lorsqu'on va clôner ou forker un dépôt de sources, on pourra utiliser la commande <code>composer install</code> pour le générer. Il contient souvent des milliers de fichiers issus des dépendances de notre application, il est donc inutile de commit et push tous ces fichiers sur un dépôt distant.</p>
+<h4 id="env"><code>.env</code></h4>
+<p>Ce fichier contient les variables d'environnement de l'application.</p>
+<p>Il contient en premier lieu la définition de l'environnement (<code>APP_ENV</code>).</p>
+<p>Nous verrons plus tard l'utilité de définir plusieurs fichiers contenant des variables d'environnement et les stratégies de versioning associées.</p>
+<h4 id="gitignore"><code>.gitignore</code></h4>
+<p>Tous les fichiers à ne pas intégrer au gestionnaire de versions.</p>
+<h4 id="composerjson"><code>composer.json</code></h4>
+<p>Le fichier Composer principal, qui contient toutes nos dépendances, et la méthode d'autoloading, entre autres.</p>
+<p>On trouvera, entre autres, les dépendances de notre application dans 2 catégories : <code>require</code> et <code>require-dev</code>.</p>
+<p><code>require</code> regroupe les dépendances utilisées tout le temps.</p>
+<p>Dans <code>require-dev</code>, on placera ce qu'on va appeler <strong>des dépendances de développement</strong>. Cela va concerner essentiellement les tests unitaires, ou utilitaires que l'on peut mettre en oeuvre lors de la phase de développement d'une application.</p>
+<blockquote>
+<p>En production par exemple, on ne voudra pas des dépendances de développement. On pourra ainsi demander à Composer de ne pas les intégrer au projet : <code>composer install --no-dev</code></p>
+</blockquote>
+<h4 id="composerlock"><code>composer.lock</code></h4>
+<p>Ce fichier est celui consulté par Composer lorsque vous effectuez un <code>composer install</code>, pour installer toutes les dépendances préalablement définies.</p>
+<p>On peut le voir comme l'équivalent du <code>package-lock.json</code> avec npm, qui permet de regrouper les versions installées.</p>
+<p>Ainsi, n'importe qui de nouveau sur le projet peut faire un <code>composer install</code> après avoir clôné ou forké le projet : il aura exactement les mêmes versions que nous.</p>
+<h4 id="docker-composeoverrideyml--docker-composeyml"><code>docker-compose.override.yml &amp; docker-compose.yml</code></h4>
+<p>Ces 2 fichiers décrivent le ou les services à instancier pour l'outil de conteneurisation <a href="https://www.docker.com/"><strong>Docker</strong></a>, et plus précisément l'utilitaire <code>docker-compose</code>.</p>
+<h4 id="packagejson"><code>package.json</code></h4>
+<p>Tout comme <code>composer.json</code>, qui regroupe les dépendances Composer utilisées pour le back-end de notre application, ce fichier regroupe les dépendances à intégrer pour <strong>npm</strong> (Node Package Manager).</p>
+<p>Vous retrouverez notamment la dépendance <code>@symfony/webpack-encore</code>, qui, comme cité plus haut, permet de développer des interfaces modulaires gérées ensuite par l'outil Webpack.</p>
+<h4 id="symfonylock"><code>symfony.lock</code></h4>
+<p>Ce fichier sert à un outil intégré avec la version 4 de Symfony : Symfony Flex.</p>
+<p>Symfony Flex est un outil construit au-dessus de Composer. Il permet, dans un projet Symfony, en plus d'installer une dépendance, d'exécuter des <strong>recettes</strong>, comme des scripts de pré-configuration d'un package.</p>
+<p>Vu que nous nous situons dans un framework, il adopte une certaine structure (dossier <code>config</code> pour la configuration, autoloading <code>PSR-4</code> avec <code>App</code> comme espace de nom racine, etc...).</p>
+<p>Lorsqu'on installe une dépendance avec la commande <code>composer require</code>, Flex peut alors entrer en jeu en créant automatiquement un fichier de configuration à l'endroit adéquat, ou bien un template de classe PHP dans <code>src</code>, etc...<strong>il va nous aider à l'intégration d'un package au sein d'une application Symfony</strong>.</p>
+<p>Ce fichier garde, en plus de la version du package, la version de la recette exécutée.</p>
+<h4 id="webpackconfigjs"><code>webpack.config.js</code></h4>
+<p>Le fichier de configuration du workflow de Webpack, et plus précisément ici de Webpack Encore.</p>
+<p>Ce fichier décrit les différentes actions à effectuer pour bundler le front-end de notre application. ON y trouvera par exemple des méthodes à activer si on veut activer le support de divers outils (Sass, TypeScript, ReactJS, etc...) :</p>
+<blockquote>
+<p>Fichier : webpack.config.js</p>
+</blockquote>
+<pre class="hljs"><code><div><span class="hljs-comment">// enables Sass/SCSS support</span>
+<span class="hljs-comment">//.enableSassLoader()</span>
+
+<span class="hljs-comment">// uncomment if you use TypeScript</span>
+<span class="hljs-comment">//.enableTypeScriptLoader()</span>
+
+<span class="hljs-comment">// uncomment if you use React</span>
+<span class="hljs-comment">//.enableReactPreset()</span>
+</div></code></pre>
+<h3 id="console">Console</h3>
+<p>La console Symfony est un exécutable PHP contenant de nombreux outils dont on va tirer partie lors des développements.</p>
+<p>Par exemple, la console nous permettra de :</p>
+<ul>
+<li>Créer un contrôleur</li>
+<li>Créer une entité</li>
+<li>Mettre à jour notre base de données</li>
+<li>Afficher des informations sur le projet Symfony</li>
+<li>Explorer le conteneur de services</li>
+<li>etc...</li>
+</ul>
+<blockquote>
+<p>On écrira toujours les appels à la console de la façon suivante, depuis la racine du projet : <code>php bin/console [commande]</code>. Une commande peut se présenter sous la forme <code>theme_commande:action_a_exectuer</code></p>
+</blockquote>
+<h3 id="contr%C3%B4leurs">Contrôleurs</h3>
+<p>Si on lance le serveur juste après l'installation de l'application, nous constatons que nous n'avons aucune page d'accueil. A la place, Symfony prévoit une page d'accueil spéciale indiquant la version de Symfony installée, et un message nous précisant que nous voyons cette page parce que nous n'avons pas configuré de page d'accueil.</p>
+<p>En utilisant la console et le <code>MakerBundle</code>, nous allons créer le premier contrôleur de notre application, qui sera configuré pour s'exécuter sur la page d'accueil.</p>
+<pre class="hljs"><code><div>php bin/console make:controller
+</div></code></pre>
+<p>On va nommer la classe <code>IndexController</code>, puis consulter le contenu du fichier <code>src/Controller/IndexController.php</code> créé par le maker.</p>
+<blockquote>
+<p>Un point sur la classe de contrôleurs : cette classe étend une classe abstraite <code>AbstractController</code>, c'est cette classe abstraite qui lui fournit les capacités d'un contrôleur. Par ailleurs, on rappelle qu'avec l'auto-chargement PSR-4, le namespace de notre contrôleur est donc <code>App\Controller</code>, puisqu'il se situe dans le dossier <code>src/Controller</code></p>
+</blockquote>
+<p>Dans la classe créée par le maker, on trouve une fonction <code>index</code>, qui va renvoyer une <code>Response</code>. C'est le principe de base de Symfony : le modèle Requête/Réponse. Un contrôleur est chargé d'être exécuté pour une route donnée (une URL, donc). Il va donc recevoir une requête, puis générer une réponse pour le client ayant effectué la requête.</p>
+<p>Au-dessus de la signature de cette fonction, on trouvera une <strong>annotation</strong> <code>@Route</code>. C'est grâce à cette annotation que nous pourrons définir l'URL associée à notre route, le nom de la route, les méthodes HTTP autorisées, etc...c'est donc <strong>la méthode</strong> qui représente ici notre contrôleur.</p>
+<blockquote>
+<p>Avec PHP8, les route peuvent également être écrites sous forme d'<a href="https://www.php.net/releases/8.0/en.php#attributes">attributs PHP8</a>. La syntaxe peut donc être un peu différente</p>
+</blockquote>
+<p>Le rôle de base d'un contrôleur étant de communiquer avec les modèles puis de demander le rendu d'une vue, on trouve l'instruction <code>$this-&gt;render('...', [...]);</code>.</p>
+<p>Ce contrôleur va déclencher le rendu d'un template.</p>
+<h3 id="templates-vues---twig---introduction">Templates (Vues) - Twig - Introduction</h3>
+<p>Dans la version webapp, pour faire une application complète, Symfony fournit Twig comme moteur de templates.</p>
+<p>Les 3 éléments de syntaxe Twig à retenir sont les suivants :</p>
+<ul>
+<li>Structure de contrôle ou de langage Twig : <code>{% %}</code></li>
+<li>Evaluer une expression et afficher le résultat à l'écran : <code>{{ }}</code></li>
+<li>Inscrire un commentaire dans un template : <code>{# #}</code></li>
+</ul>
+<p>Exemple d'un fichier Twig :</p>
+<pre class="hljs"><code><div><span class="hljs-comment">{# base.html.twig #}</span><span class="xml">
+<span class="hljs-meta">&lt;!DOCTYPE <span class="hljs-meta-keyword">html</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">html</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">head</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">meta</span> <span class="hljs-attr">charset</span>=<span class="hljs-string">"UTF-8"</span> /&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">title</span>&gt;</span></span><span class="hljs-template-tag">{% <span class="hljs-name"><span class="hljs-keyword">block</span></span> title %}</span><span class="xml">Mon super titre</span><span class="hljs-template-tag">{% <span class="hljs-name"><span class="hljs-keyword">endblock</span></span> %}</span><span class="xml"><span class="hljs-tag">&lt;/<span class="hljs-name">title</span>&gt;</span>
+    </span><span class="hljs-template-tag">{% <span class="hljs-name"><span class="hljs-keyword">block</span></span> stylesheets %}</span><span class="hljs-template-tag">{% <span class="hljs-name"><span class="hljs-keyword">endblock</span></span> %}</span><span class="xml">
+  <span class="hljs-tag">&lt;/<span class="hljs-name">head</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">body</span>&gt;</span>
+    </span><span class="hljs-template-tag">{% <span class="hljs-name"><span class="hljs-keyword">block</span></span> body %}</span><span class="hljs-template-tag">{% <span class="hljs-name"><span class="hljs-keyword">endblock</span></span> %}</span><span class="xml">
+    </span><span class="hljs-template-tag">{% <span class="hljs-name"><span class="hljs-keyword">block</span></span> javascripts %}</span><span class="hljs-template-tag">{% <span class="hljs-name"><span class="hljs-keyword">endblock</span></span> %}</span><span class="xml">
+  <span class="hljs-tag">&lt;/<span class="hljs-name">body</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">html</span>&gt;</span>
+</span></div></code></pre>
+<blockquote>
+<p>Note : par défaut, Symfony crée le fichier <code>base.html.twig</code> avec des références à Webpack Encore, en intégrant dans les blocks <code>stylesheets</code> et <code>javascripts</code> des fonctions comme <code>encore_entry_link_tags</code> ou <code>encore_entry_script_tags</code>. <strong>Vous pouvez supprimer ces lignes pour le moment</strong>, sinon au premier lancement de votre projet vous aurez une erreur</p>
+</blockquote>
+<p>Dans tout fichier de template, on pourra inclure des instructions Twig pour la compilation du template.</p>
+<p>Dans ce premier extrait par exemple, on construit un squelette HTML de base.</p>
+<p>Le but est d'avoir un template de base commun pour toutes les pages de notre application.</p>
+<p>On définit donc dans notre squelette de base différents <strong>blocs</strong>, que nous allons mettre à disposition des templates enfants pour qu'ils définissent chacun leur propre contenu :</p>
+<pre class="hljs"><code><div><span class="hljs-comment">{# index/index.html.twig #}</span><span class="xml">
+</span><span class="hljs-template-tag">{% <span class="hljs-name"><span class="hljs-keyword">extends</span></span> 'base.html.twig' %}</span><span class="xml">
+
+</span><span class="hljs-template-tag">{% <span class="hljs-name"><span class="hljs-keyword">block</span></span> title %}</span><span class="xml">
+  </span><span class="hljs-comment">{# Il est possible de rappeler le contenu du bloc parent avec la fonction parent() #}</span><span class="xml">
+  </span><span class="hljs-template-variable">{{ <span class="hljs-name">parent</span><span class="hljs-params">()</span> }}</span><span class="xml"> - Hello TestController!
+</span><span class="hljs-template-tag">{% <span class="hljs-name"><span class="hljs-keyword">endblock</span></span> %}</span><span class="xml">
+
+</span><span class="hljs-template-tag">{% <span class="hljs-name"><span class="hljs-keyword">block</span></span> body %}</span><span class="xml">
+
+<span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"example-wrapper"</span>&gt;</span>
+  </span><span class="hljs-comment">{# On peut afficher la valeur de variables passées par le contrôleur à la vue #}</span><span class="xml">
+  <span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span>Hello </span><span class="hljs-template-variable">{{ controller_name }}</span><span class="xml">! ✅<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+</span><span class="hljs-template-tag">{% <span class="hljs-name"><span class="hljs-keyword">endblock</span></span> %}</span><span class="xml">
+</span></div></code></pre>
+<blockquote>
+<p>Les différents blocs définis dans le template parent vont donc prendre le contenu défini dans le template enfant. On pourra donc définir les contenus de chaque page séparément, en gardant une base d'affichage commune (inclusion des CSS et JS de Bootstrap, etc...)</p>
+</blockquote>
+<h3 id="base-de-donn%C3%A9es">Base de données</h3>
+<p>On va renseigner dans un ficher de variables d'environnement les coordonnées d'accès à la base de données, via la variable <code>DATABASE_URL</code>.</p>
+<blockquote>
+<p>IMPORTANT : Avant de pouvoir effectuer des mises à jour dans la base de données, il faut renseigner l'URL d'accès à la base de données dans le fichier .env.local, qui n'est pas intégré au gestionnaire de versions (<a href="https://symfony.com/doc/current/doctrine.html#configuring-the-database">Documentation</a>)</p>
+</blockquote>
+<p>Par la suite, on va pouvoir demander à Doctrine de créer la base de données pour nous avec la commande suivante :</p>
+<pre class="hljs"><code><div>php bin/console doctrine:database:create
+</div></code></pre>
+<h3 id="entit%C3%A9s---mod%C3%A8les">Entités - Modèles</h3>
+<p>Pour créer des entités dans notre application, nous allons utiliser le Maker : <code>php bin/console make:entity</code>.</p>
+<p>L'assistant ligne de commande est plutôt clair et simple à utiliser. Choisissez pour chaque propriété que vous voulez créer son type, sa taille, nullable ou non, etc...</p>
+<p>Une fois notre entité terminée, le Maker nous a créé une classe d'entité dans <code>src/Entity</code>.</p>
+<p>Cette classe contient différents attributs qui deviendront plus tard les colonnes de nos tables. Par ailleurs, l'encapsulation est respectée puisque pour chaque attribut on peut trouver un <strong>getter</strong> et un <strong>setter</strong> associés.</p>
+<h3 id="mise-%C3%A0-jour-de-la-base-de-donn%C3%A9es">Mise à jour de la base de données</h3>
+<p>Nous allons voir 2 manières de mettre à jour la base de données : les migrations et les mises à jour à la volée.</p>
+<p>Dans tous les cas, les mises à jour de base de données se font en <strong>2 étapes</strong> : <strong>préparation &amp; revue</strong> du code SQL qui va être exécuté, puis <strong>exécution</strong> de la mise à jour.</p>
+<blockquote>
+<p>IMPORTANT : Avant de pouvoir effectuer des mises à jour dans la base de données, il faut renseigner l'URL d'accès à la base de données dans le fichier .env.local, qui n'est pas intégré au gestionnaire de versions (<a href="https://symfony.com/doc/current/doctrine.html#configuring-the-database">Documentation</a>)</p>
+</blockquote>
+<h4 id="migrations">Migrations</h4>
+<p>Pour générer une migration, on va simplement exécuter la commande suivante du Maker : <code>php bin/console make:migration</code>.</p>
+<p>Cette commande va comparer le contenu de nos classes d'entités avec le contenu de la structure de la base de données, puis générer une classe de migration dans le dossier <code>migrations</code>, contenant le code SQL nécessaire à la synchronisation des 2 côtés (code &amp; BDD).</p>
+<p>Une fois la migration générée, on peut aller vérifier dans le fichier généré que le code SQL correspond aux mises à jour que l'on souhaite effectuer.</p>
+<p>Une fois le code SQL passé en revue, on peut exécuter la mise à jour, donc exécuter la migration : <code>php bin/console doctrine:migrations:migrate</code>.</p>
+<p>Dans ce cas, Doctrine prend le relais : il va vérifier les migrations déjà éventuellement exécutées, pour éviter d'exécuter la même 2 fois, et exécuter celles qui doivent l'être.</p>
+<blockquote>
+<p>L'approche avec migrations pour la base de données est la manière recommandée pour gérer les évolutions de structures. Elle présente l'avantage principal d'être rigoureuse, avec la génération de classes de migrations permettant de cibler précisément et rigoureusement les mises à jour effectuées. Cependant, il faut bien veiller à ne pas s'emmêler les pinceaux dans les différentes mises à jour de structures, et que l'outil de migration s'y retrouve également</p>
+</blockquote>
+<h4 id="mise-%C3%A0-jour-%C3%A0-la-vol%C3%A9e">Mise à jour à la volée</h4>
+<p>Le fonctionnement est similaire, mais ne génère aucun fichier de migration.</p>
+<p>Revue du code qui va être exécuté : <code>php bin/console doctrine:schema:update --dump-sql</code>.</p>
+<p>Exécution à la volée des mises à jour nécessaires : <code>php bin/console doctrine:schema:update --force</code>.</p>
+<h3 id="ajout-dune-relation-onetomany">Ajout d'une relation OneToMany</h3>
+<p>Avec un ORM, nous allons réfléchir notre base de données sous forme Objet.</p>
+<p>Cela signifie que dans l'exemple que nous réalisons, c'est-à-dire un site d'actualités, nous avons créé une entité <code>Article</code>, correspondant à la table <code>article</code> de notre base de données.</p>
+<p>Nous souhaitons que nos articles aient une catégorie.</p>
+<p>En base de données, on sait que ce type de besoin correspond à une association 1-N, avec ajout d'une clé étrangère.</p>
+<p>Avec Doctrine, on va donc créer une entité <code>Category</code>, mais le but est de pouvoir manipuler nos instances de classes de la manière suivante par exemple : <code>$category-&gt;getArticles();</code>.</p>
+<p>On va donc créer un attribut <code>articles</code> dans notre entite <code>Category</code>. Mais dans le maker, nous allons pouvoir définir cette propriété comme étant une <strong>relation</strong>, et plus précisément une relation <strong>OneToMany</strong>.</p>
+<p>L'assistant va également nous demander si on souhaite créer un nouvel attribut dans <code>Article</code>, afin de créer une relation <strong>bi-directionnelle</strong>, nous permettant de récupérer les articles d'une catégorie, et la catégorie d'un article. On confirme la création d'un attribut <code>category</code> dans l'entité <code>Article</code>.</p>
+<pre class="hljs"><code><div><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Article</span>
+</span>{
+  <span class="hljs-comment">//...</span>
+
+  <span class="hljs-comment">/**
+   * <span class="hljs-doctag">@ORM</span>\ManyToOne(targetEntity=Category::class, inversedBy="articles")
+   * <span class="hljs-doctag">@ORM</span>\JoinColumn(nullable=false)
+   */</span>
+  <span class="hljs-keyword">private</span> $category;
+
+  <span class="hljs-comment">//...</span>
+
+  <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getCategory</span><span class="hljs-params">()</span>: ?<span class="hljs-title">Category</span>
+  </span>{
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">$this</span>-&gt;category;
+  }
+}
+</div></code></pre>
+<pre class="hljs"><code><div><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Category</span>
+</span>{
+  <span class="hljs-comment">//...</span>
+
+  <span class="hljs-comment">/**
+   * <span class="hljs-doctag">@ORM</span>\OneToMany(targetEntity=Article::class, mappedBy="category")
+   */</span>
+  <span class="hljs-keyword">private</span> $articles;
+
+  <span class="hljs-comment">//...</span>
+
+  <span class="hljs-comment">/**
+   * <span class="hljs-doctag">@return</span> Collection&lt;int, Article&gt;
+   */</span>
+  <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getArticles</span><span class="hljs-params">()</span>: <span class="hljs-title">Collection</span>
+  </span>{
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">$this</span>-&gt;articles;
+  }
+}
+</div></code></pre>
+<blockquote>
+<p>Note : l'attribut <code>articles</code> est créé et géré du point de vue de Doctrine comme une <code>ArrayCollection</code>, une collection d'objets à laquelle on peut enlever/ajouter des éléments</p>
+</blockquote>
+<h3 id="fixtures---les-donn%C3%A9es-de-tests">Fixtures - Les données de tests</h3>
+<p>Une fois qu'on a nos entités, qu'on a créé notre base de données, on aimerait pouvoir insérer des données de test pour travailler sur un ensemble initial de données lors du développement de notre application.</p>
+<p>On va pour cela utiliser les <strong>fixtures</strong>.</p>
+<p>On installe la dépendance de développement suivante : <code>orm-fixtures</code> (il s'agit de l'alias Flex).</p>
+<p>La recette exécutée lors de l'installation a créé un fichier <code>src/DataFixtures/AppFixtures.php</code>.</p>
+<p>C'est dans ce fichier qu'on va créer nos objets et les enregistrer en base de données.</p>
+<p>Notre fichier de fixtures, à la base, ressemble à quelque chose comme ça :</p>
+<pre class="hljs"><code><div><span class="hljs-meta">&lt;?php</span>
+
+<span class="hljs-keyword">namespace</span> <span class="hljs-title">App</span>\<span class="hljs-title">DataFixtures</span>;
+
+<span class="hljs-keyword">use</span> <span class="hljs-title">Doctrine</span>\<span class="hljs-title">Bundle</span>\<span class="hljs-title">FixturesBundle</span>\<span class="hljs-title">Fixture</span>;
+<span class="hljs-keyword">use</span> <span class="hljs-title">Doctrine</span>\<span class="hljs-title">Persistence</span>\<span class="hljs-title">ObjectManager</span>;
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">AppFixtures</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Fixture</span>
+</span>{
+  <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">load</span><span class="hljs-params">(ObjectManager $manager)</span>
+  </span>{
+    <span class="hljs-comment">//...</span>
+
+    $manager-&gt;flush();
+  }
+}
+</div></code></pre>
+<p>Dans la méthode <code>load</code> de notre classe, on va donc vouloir instancier toutes les entités qu'on souhaite enregistrer en base de données.</p>
+<p>Par exemple :</p>
+<pre class="hljs"><code><div><span class="hljs-meta">&lt;?php</span>
+<span class="hljs-comment">//...</span>
+<span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">load</span><span class="hljs-params">(ObjectManager $manager)</span>
+</span>{
+  $article = <span class="hljs-keyword">new</span> Article();
+  $article-&gt;setTitle($faker-&gt;words($faker-&gt;numberBetween(<span class="hljs-number">2</span>, <span class="hljs-number">7</span>), <span class="hljs-keyword">true</span>))
+    -&gt;setDate($faker-&gt;dateTimeBetween(<span class="hljs-string">'-2 years'</span>))
+    -&gt;setVisible($faker-&gt;boolean(<span class="hljs-number">80</span>))
+    -&gt;setContent($faker-&gt;realTextBetween(<span class="hljs-number">150</span>, <span class="hljs-number">260</span>))
+    -&gt;setCategory($faker-&gt;randomElement($categories));
+  $manager-&gt;persist($article);
+
+  $manager-&gt;flush();
+}
+<span class="hljs-comment">//...</span>
+</div></code></pre>
+<p>On peut ensuite générer notre base de tests avec la commande suivante : <code>php bin/console doctrine:fixtures:load</code></p>
+<h4 id="s%C3%A9parer-ses-fixtures-dans-plusieurs-fichiers">Séparer ses fixtures dans plusieurs fichiers</h4>
+<p>La <a href="https://symfony.com/bundles/DoctrineFixturesBundle/current/index.html#splitting-fixtures-into-separate-files">documentation</a> nous indique qu'on peut également séparer les fixtures dans plusieurs fichiers.</p>
+<p>Dans ce dépôt Git, jetez un oeil à la branche <code>fixtures-multiple-files</code> pour en avoir un aperçu.</p>
+<h3 id="la-persistance-des-entit%C3%A9s">La persistance des entités</h3>
+<p>Dans l'extrait de code ci-dessus, reprenons les différentes étapes empruntées afin de pouvoir sauvegarder une entité en base de données :</p>
+<ul>
+<li>On instancie un nouvel objet de type <code>Article</code></li>
+<li>On utilise l'interface fluide pour assigner des valeurs à ses différents attributs, via les setters</li>
+<li>On <strong>persiste</strong> l'entité</li>
+<li>On <code>flush</code> les changements effectués pour qu'ils soient exécutés en base de données</li>
+</ul>
+<p>Lorsqu'on va vouloir créer un nouvel enregistrement en base de données, on va devoir passer par ces étapes. Et particulièrement l'étape de <strong>persistance</strong>.</p>
+<blockquote>
+<p>L'étape de persistance, c'est-à-dire l'appel à la méthode <code>persist</code> de votre gestionnaire d'entités, est indispensable. Il permet tout simplement, après la création d'un objet, de <strong>dire à votre gestionnaire que vous souhaitez qu'il gère cette entité</strong>. Vu qu'elle n'existe pas encore (on vient de la créer manuellement, dans le code, on ne l'a pas récupérée d'une source de données existante), elle sera donc persistée, c'est-à-dire créée en base de données, lorsque vous exécuterez la méthode <code>flush</code> du gestionnaire</p>
+</blockquote>
+<hr>
+<blockquote>
+<p>L'appel à la méthode <code>flush</code> permet de <strong>pousser</strong> vers la base de données tous les changements que vous avez demandés à votre gestionnaire d'entités. Pour notre exemple, il s'agit, après avoir demandé à notre gestionnaire de gérer l'entité, de l'insérer de manière concrète dans la base de données, donc d'exécuter le code SQL nécessaire à son insertion. Ceci nous permet de pouvoir demander plusieurs opérations à notre gestionnaire (insertion, modification, suppression), puis d'effectuer un seul appel à <code>flush</code> pour regrouper toutes les requêtes. Ce serait trop lourd si on devait exécuter une requête à chaque fois qu'on demandait quelque chose au gestionnaire</p>
+</blockquote>
+<p>Ainsi, nous pouvons donc créer plusieurs catégories, plusieurs articles, les persister, puis demander à Doctrine de les insérer :</p>
+<pre class="hljs"><code><div><span class="hljs-meta">&lt;?php</span>
+<span class="hljs-comment">//...</span>
+<span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">load</span><span class="hljs-params">(ObjectManager $manager)</span>
+</span>{
+  $categories = [];
+
+  <span class="hljs-keyword">for</span> ($i = <span class="hljs-number">0</span>; $i &lt; <span class="hljs-number">25</span>; $i++) {
+      $category = <span class="hljs-keyword">new</span> Category();
+      $category-&gt;setName($faker-&gt;words(<span class="hljs-number">2</span>, <span class="hljs-keyword">true</span>));
+      $manager-&gt;persist($category);
+      $categories[] = $category;
+  }
+
+  <span class="hljs-keyword">for</span> ($i = <span class="hljs-number">0</span>; $i &lt; <span class="hljs-number">250</span>; $i++) {
+      $article = <span class="hljs-keyword">new</span> Article();
+      $article-&gt;setTitle($faker-&gt;sentence(<span class="hljs-number">5</span>))
+          -&gt;setDate($faker-&gt;dateTimeBetween(<span class="hljs-string">'-2 years'</span>))
+          -&gt;setVisible($faker-&gt;boolean(<span class="hljs-number">80</span>))
+          -&gt;setContent($faker-&gt;realTextBetween(<span class="hljs-number">150</span>, <span class="hljs-number">280</span>))
+          -&gt;setCategory($faker-&gt;randomElement($categories));
+
+      $manager-&gt;persist($article);
+  }
+
+  $manager-&gt;flush();
+}
+<span class="hljs-comment">//...</span>
+</div></code></pre>
+<h3 id="afficher-des-donn%C3%A9es">Afficher des données</h3>
+<p>Nous disposons à présent de données aléatoires générées automatiquement dans notre base de données.</p>
+<p>Nous allons donc pouvoir les afficher à l'écran !</p>
+<p>Pour les afficher, il faut donc que notre <strong>vue</strong> dispose d'une collection d'articles à afficher.</p>
+<blockquote>
+<p>Dans le pattern MVC, le contrôleur est chargé d'agir en tant que &quot;<em>glue</em>&quot; entre le modèle et la vue. Dans Symfony, il va donc se charger de récupérer les articles auprès d'une couche de service (les repositories), puis transmettre le résultat obtenu à la vue</p>
+</blockquote>
+<h4 id="les-repositories">Les repositories</h4>
+<p>Dans Symfony, les repositories agissent comme une <strong>couche de service</strong>.</p>
+<p>Un service, de manière générale dans une application, fournit des fonctionnalités que nous pouvons consommer depuis un autre endroit de l'application. Un service sera généralement représenté par une classe, et les fonctionnalités fournies, par des méthodes.</p>
+<p>Dans notre cas, <strong>un repository peut donc être qualifié de service applicatif nous permettant de discuter avec notre base de données, à propos d'un sujet particulier (une entité)</strong>.</p>
+<p>On retrouve cette &quot;sectorisation&quot; sur une entité dans le constructeur, par exemple :</p>
+<pre class="hljs"><code><div><span class="hljs-comment">// src/Repository/ArticleRepository.php</span>
+<span class="hljs-comment">//...</span>
+<span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">__construct</span><span class="hljs-params">(ManagerRegistry $registry)</span>
+</span>{
+    <span class="hljs-keyword">parent</span>::__construct($registry, Article::class);
+}
+<span class="hljs-comment">//...</span>
+</div></code></pre>
+<p>Si on explore un peu plus cette classe, on remarque qu'elle hérite d'une classe <code>ServiceEntityRepository</code>, qui elle-même hérite d'une classe <code>EntityRepository</code>. Ces 2 derniers fichiers appartiennent au package Doctrine, nous ne devons donc <strong>absolument pas</strong> tenter de les modifier (ils se trouvent quelque part dans les vendors).</p>
+<p>Une rapide revue de la classe <code>EntityRepository</code> nous indique donc que notre <code>ArticleRepository</code>, par exemple, hérite de méthodes publiques telles que <code>find</code>, <code>findAll</code>, <code>findBy</code>, etc...</p>
+<blockquote>
+<p>Ce sont ces méthodes que nous voulons utiliser dans notre contrôleur afin de pouvoir récupérer nos articles sans écrire nous-mêmes le SQL. C'est Doctrine qui va se charger de ça pour nous</p>
+</blockquote>
+<h3 id="introduction-%C3%A0-linjection-de-d%C3%A9pendances">Introduction à l'injection de dépendances</h3>
+<p>Prenons un exemple : si on veut afficher tous les articles. La problématique principale réside donc dans la nécessité pour le contrôleur de disposer d'une instance de notre <code>ArticleRepository</code>, afin d'exploiter les méthodes offertes par ce service.</p>
+<p><img src="file:///home/lucas/symfony/ynov_b2_a_2022/docs/MVC_Service.png" alt="MVC avec un repository en tant que service" title="MVC avec un repository en tant que service"></p>
+<p>Le premier moyen que nous pourrions utiliser est l'instanciation d'un repository dans notre contrôleur :</p>
+<pre class="hljs"><code><div><span class="hljs-comment">//...</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">IndexController</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">AbstractController</span>
+</span>{
+  <span class="hljs-comment">/**
+   * <span class="hljs-doctag">@Route</span>("/", name="index")
+   */</span>
+  <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">index</span><span class="hljs-params">()</span>: <span class="hljs-title">Response</span>
+  </span>{
+    $articleRepository = <span class="hljs-keyword">new</span> ArticleRepository();
+  }
+  <span class="hljs-comment">//...</span>
+}
+</div></code></pre>
+<p>Le souci est que <strong>la signature du constructeur attend un paramètre</strong> !
+Nous devrions donc nous poser une seconde problématique pour instancier ce paramètre. Mais celui-ci est de type <code>ManagerRegistry</code>, qui est une interface ! Nous ne pouvons pas instancier une interface...</p>
+<p>Il existe un moyen plus simple pour disposer d'une instance de notre <code>ArticleRepository</code> : nous allons <strong>l'injecter</strong> directement dans notre contrôleur. Pour gérer l'injection de l'instance, nous allons simplement nous reposer sur le <strong>container</strong> de Symfony.</p>
+<h4 id="le-container">Le container</h4>
+<p>Le container Symfony est un ensemble de classes compilées dans le dossier <code>var/cache</code> de notre application. Il est compilé automatiquement par Symfony.</p>
+<p>Il va contenir diverses informations sur notre application, et notamment la liste des services de notre application.</p>
+<p>Pour les découvrir, il va explorer notre dossier <code>src/</code> à la recherche des classes utilisables en tant que services.</p>
+<p>Le fait qu'il aille chercher dans le dossier <code>src/</code> n'est pas magique, et est issu de la configuration par défaut de Symfony :</p>
+<pre class="hljs"><code><div><span class="hljs-comment"># config/services.yaml</span>
+
+<span class="hljs-comment">#...</span>
+
+<span class="hljs-attr">services:</span>
+  <span class="hljs-comment"># ...</span>
+
+  <span class="hljs-comment"># makes classes in src/ available to be used as services</span>
+  <span class="hljs-comment"># this creates a service per class whose id is the fully-qualified class name</span>
+  <span class="hljs-string">App\:</span>
+    <span class="hljs-attr">resource:</span> <span class="hljs-string">"../src/"</span>
+    <span class="hljs-attr">exclude:</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">"../src/DependencyInjection/"</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">"../src/Entity/"</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">"../src/Kernel.php"</span>
+<span class="hljs-comment">#...</span>
+</div></code></pre>
+<blockquote>
+<p>Attention au format des fichiers Yaml : il s'agit d'un format permettant de déclarer des éléments de configuration. Ces éléments peuvent être regroupés en <strong>sections</strong>. Dans une section seront regroupés tous les éléments <strong>avec un niveau d'indentation supplémentaire</strong>. <strong>Une erreur dans la gestion de vos niveaux d'indentation peut tout simplement rendre votre fichier invalide</strong> !</p>
+</blockquote>
+<p>Ici, dans la section <code>services</code>, le container va pouvoir aller explorer l'ensemble des classes présentes dans <code>src/</code>, à l'exception de certains fichiers et dossiers que nous ne voulons pas enregistrer dans le container en tant que services (directive <code>exclude</code>).</p>
+<p>Ainsi, nous pouvons en déduire que notre container connaît l'ensemble de nos repositories en tant que services applicatifs, utilisables là où on en a besoin.</p>
+<p>Par exemple, si je souhaite communiquer avec ma base de données à propos d'articles dans mon contrôleur, je peux donc injecter un argument de type <code>ArticleRepository</code> afin de consommer les méthodes que ce service nous offre :</p>
+<pre class="hljs"><code><div><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">IndexController</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">AbstractController</span>
+</span>{
+  <span class="hljs-comment">//...</span>
+  <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">index</span><span class="hljs-params">(ArticleRepository $articleRepository)</span>: <span class="hljs-title">Response</span>
+  </span>{
+    <span class="hljs-comment">// 1 - Je récupère les articles en discutant avec ma couche de service</span>
+    $articles = $articleRepository-&gt;findAll();
+
+    <span class="hljs-comment">// 2 - Je transmets les articles à la vue que je souhaite afficher</span>
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">$this</span>-&gt;render(<span class="hljs-string">'index/index.html.twig'</span>, [
+      <span class="hljs-string">'articles'</span> =&gt; $articles,
+    ]);
+  }
+  <span class="hljs-comment">//...</span>
+}
+</div></code></pre>
+<blockquote>
+<p>Cette méthode s'appelle le <code>type-hinting</code> : il s'agit de spécifier le type attendu pour un argument de méthode. Ensuite, le container reconnaît ce type, vu qu'il l'a déjà découvert en explorant nos fichiers dans <code>src/</code>, et est donc capable d'injecter le service correspondant à ce type, s'il le connaît</p>
+</blockquote>
+<p>Pour résumer, nous pouvons donc dire que <code>ArticleRepository</code> est une <strong>dépendance</strong> de notre contrôleur, puisque ce dernier a besoin de ce service pour pouvoir fonctionner correctement, c'est-à-dire pour pouvoir récupérer les articles qu'il va transmettre à la vue.</p>
+<p>Nous venons donc d'<strong>injecter cette dépendance</strong> dans notre contrôleur.</p>
+<p><img src="file:///home/lucas/symfony/ynov_b2_a_2022/docs/MVC_Service_Container.png" alt="MVC avec Container" title="MVC avec Container"></p>
+<h4 id="explorer-le-container-de-services">Explorer le container de services</h4>
+<p>Avec la console applicative, on peut demander à Symfony de nous montrer les services dont il dispose :</p>
+<pre class="hljs"><code><div>php bin/console debug:container
+</div></code></pre>
+<p>La liste qui va s'afficher est un peu longue. En effet, le container de services contient les services que nous avons définis au niveau de notre application, mais également <strong>les services déclarés par les packages tiers que nous avons installés, donc les dépendances de notre projet</strong>.</p>
+<p>C'est pour cela que si on regarde un peu la liste proposée, on retrouvera des services de log, d'envoi d'email, de traduction, de sécurité, etc...</p>
+<p>On peut demander à Symfony de filtrer cette liste, par exemple si on voulait les informations sur notre <code>ArticleRepository</code> :</p>
+<pre class="hljs"><code><div>php bin/console debug:container Article
+</div></code></pre>
+<p><img src="file:///home/lucas/symfony/ynov_b2_a_2022/docs/ArticleRepository_container_infos.png" alt="Article Repository informations" title="Article Repository informations"></p>
+<p>Pour le moment, ce qu'on va retenir des informations ci-dessus, c'est qu'au sein du container de services, les services que l'on écrit sont <strong>privés</strong>. On ne peut donc pas utiliser le container manuellement pour les récupérer, comme ça, de n'importe où. A la place, on va utiliser un <strong>type-hint</strong>, directement au sein de notre contrôleur.</p>
+<h3 id="afficher-les-%C3%A9l%C3%A9ments-dune-collection-dans-une-vue-twig">Afficher les éléments d'une collection dans une vue Twig</h3>
+<p>Notre contrôleur dispose d'un moyen de récupérer la collection d'articles, et peut la transmettre à la vue.</p>
+<p>Dans notre template Twig correspondant, nous allons itérer sur la collection afin d'afficher chaque élément. Pour ce faire, nous allons utiliser une boucle <a href="https://twig.symfony.com/doc/3.x/tags/for.html">for</a> :</p>
+<pre class="hljs"><code><div><span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">ul</span>&gt;</span>
+  </span><span class="hljs-template-tag">{% <span class="hljs-name"><span class="hljs-keyword">for</span></span> article in articles %}</span><span class="xml">
+    <span class="hljs-tag">&lt;<span class="hljs-name">li</span>&gt;</span></span><span class="hljs-template-variable">{{ article.title }}</span><span class="xml"><span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span>
+  </span><span class="hljs-template-tag">{% <span class="hljs-name"><span class="hljs-keyword">endfor</span></span> %}</span><span class="xml">
+<span class="hljs-tag">&lt;/<span class="hljs-name">ul</span>&gt;</span>
+</span></div></code></pre>
+<blockquote>
+<p>Attention, la syntaxe d'une boucle <code>for</code> avec Twig ressemble à celle d'un <code>foreach</code> en PHP, mais la collection sur laquelle itérer et la variable d'itération à utiliser sont dans le sens inverse ! Sans compter évidemment que le mot <code>as</code> change en <code>in</code> avec Twig</p>
+</blockquote>
+<p>On remarque que pour afficher un champ d'un objet <code>Article</code>, Twig nous permet d'accéder à l'attribut d'un objet à l'aide d'un point <code>.</code></p>
+<p>En réalité, il faut bien avoir en tête le mécanisme mis en oeuvre par Twig pour arriver à afficher l'attribut correspondant. En effet, dans notre exemple, l'attribut <code>title</code> est marqué comme <code>private</code> par exemple. Comment Twig peut-il donc deviner comment accéder à sa valeur ?</p>
+<p>La réponse se trouve derrière <a href="https://twig.symfony.com/doc/3.x/templates.html#variables">ce lien</a> : Twig dispose de plusieurs possibilités à explorer sur une variable lorsqu'on tente d'accéder à un attribut de celle-ci.</p>
+<p>Dans notre cas, il s'arrête sur le cas &quot;if foo is an object, check that getBar is a valid method&quot;, où <code>foo</code> est notre variable <code>article</code> et <code>getBar</code> notre méthode <code>getTitle</code>.</p>
+<p>Pour une liste de catégories, alors on réutiliserait le même type de fonctionnement dans le contrôleur, mais avec le <code>CategoryRepository</code>. Par la suite, l'idée serait donc de passer les catégories à la vue :</p>
+<pre class="hljs"><code><div><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">CategoryController</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">AbstractController</span>
+</span>{
+  <span class="hljs-comment">/**
+   * <span class="hljs-doctag">@Route</span>("/categories", name="categories_list")
+   */</span>
+  <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">list</span><span class="hljs-params">(CategoryRepository $categoryRepository)</span>: <span class="hljs-title">Response</span>
+  </span>{
+      $categories = $categoryRepository-&gt;findAll();
+
+      <span class="hljs-keyword">return</span> <span class="hljs-keyword">$this</span>-&gt;render(<span class="hljs-string">'category/list.html.twig'</span>, [
+          <span class="hljs-string">'categories'</span> =&gt; $categories
+      ]);
+  }
+}
+</div></code></pre>
+<p>Ensuite, dans la vue :</p>
+<pre class="hljs"><code><div><span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">ul</span>&gt;</span>
+  </span><span class="hljs-template-tag">{% <span class="hljs-name"><span class="hljs-keyword">for</span></span> category in categories %}</span><span class="xml">
+      <span class="hljs-tag">&lt;<span class="hljs-name">li</span>&gt;</span>
+          </span><span class="hljs-template-variable">{{ category.name }}</span><span class="xml"> (</span><span class="hljs-template-variable">{{ category.articles|<span class="hljs-keyword">length</span> }}</span><span class="xml"> articles)
+      <span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span>
+  </span><span class="hljs-template-tag">{% <span class="hljs-name">else</span> %}</span><span class="xml">
+      <span class="hljs-tag">&lt;<span class="hljs-name">li</span>&gt;</span>Aucune catégorie trouvée<span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span>
+  </span><span class="hljs-template-tag">{% <span class="hljs-name"><span class="hljs-keyword">endfor</span></span> %}</span><span class="xml">
+<span class="hljs-tag">&lt;/<span class="hljs-name">ul</span>&gt;</span>
+</span></div></code></pre>
+<p>Deux nouveaux éléments ici :</p>
+<ul>
+<li>la structure <code>for</code> de Twig intègre également un élément <code>else</code> permettant de définir un affichage si aucun élément n'a été trouvé dans la liste</li>
+<li>On peut utiliser les <a href="https://twig.symfony.com/doc/3.x/filters/index.html"><strong>filtres</strong></a> avec Twig : avec l'opérateur <code>|</code>, on applique un filtre sur un élément (une variable par exemple). Dans notre cas, sur la collection d'articles de chaque catégorie, on affiche simplement la longueur de cette collection avec le filtre <code>length</code></li>
+</ul>
+<h3 id="r%C3%A9cup%C3%A9rer-et-afficher-un-%C3%A9l%C3%A9ment-de-la-base-de-donn%C3%A9es">Récupérer et afficher un élément de la base de données</h3>
+<p>Si nous souhaitons réaliser la page d'une catégorie par exemple, la première problématique va être la suivante : comment récupérer la bonne catégorie ?</p>
+<h4 id="premi%C3%A8re-piste---injecter-la-requ%C3%AAte-dans-le-contr%C3%B4leur">Première piste - Injecter la requête dans le contrôleur</h4>
+<p>Symfony possède une classe <code>Request</code> que nous pouvons type-hinter dans n'importe quel contrôleur. Une fois que nous disposons d'une instance de la classe <code>Request</code>, nous pouvons accéder à diverses informations concernant la requête effectuée.</p>
+<p>Par exemple, ici, nous aimerions récupérer un paramètre GET <code>id</code> :</p>
+<pre class="hljs"><code><div><span class="hljs-comment">/**
+  * <span class="hljs-doctag">@Route</span>("/category", name="category_item")
+  */</span>
+<span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">item</span><span class="hljs-params">(Request $request)</span>: <span class="hljs-title">Response</span>
+</span>{
+  $id = $request-&gt;query-&gt;getInt(<span class="hljs-string">'id'</span>);
+
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">$this</span>-&gt;render(<span class="hljs-string">'category/item.html.twig'</span>, [
+    <span class="hljs-string">'id'</span> =&gt; $id
+  ]);
+}
+</div></code></pre>
+<p>On utilise l'attribut <code>query</code>, qui contient tous les paramètres GET de la requête.</p>
+<p>On pourrait donc, une fois qu'on a récupéré l'ID de la catégorie qu'on souhaite afficher, injecter notre <code>CategoryRepository</code> dans notre contrôleur afin de récupérer l'entité en question :</p>
+<pre class="hljs"><code><div><span class="hljs-comment">/**
+  * <span class="hljs-doctag">@Route</span>("/category", name="category_item")
+  */</span>
+<span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">item</span><span class="hljs-params">(Request $request, CategoryRepository $repo)</span>: <span class="hljs-title">Response</span>
+</span>{
+  $id = $request-&gt;query-&gt;getInt(<span class="hljs-string">'id'</span>);
+  $category = $repo-&gt;find($id);
+
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">$this</span>-&gt;render(<span class="hljs-string">'category/item.html.twig'</span>, [
+    <span class="hljs-string">'category'</span> =&gt; $category
+  ]);
+}
+</div></code></pre>
+<p>Bien que cette solution soit valide techniquement, elle ne sera pas convenable. En effet, nous aimerions par exemple disposer d'URL mieux formées, type <code>/category/56</code> au lieu de <code>/category?id=56</code>.</p>
+<p>Pour ce faire, nous allons commencer par modifier l'URL de notre route, dans l'annotation, pour lui ajouter un <strong>paramètre d'URL</strong> :</p>
+<pre class="hljs"><code><div><span class="hljs-comment">/**
+  * <span class="hljs-doctag">@Route</span>("/category/{id}", name="category_item")
+  */</span>
+<span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">item</span><span class="hljs-params">(CategoryRepository $repo, int $id = <span class="hljs-number">0</span>)</span>: <span class="hljs-title">Response</span>
+</span>{
+  $category = $repo-&gt;find($id);
+
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">$this</span>-&gt;render(<span class="hljs-string">'category/item.html.twig'</span>, [
+    <span class="hljs-string">'category'</span> =&gt; $category
+  ]);
+}
+</div></code></pre>
+<p>Ici, nous avons ajouté dans l'annotation de route un paramètre d'URL : id.</p>
+<p>Mais nous voyons que tout paramètre d'URL peut être mappé en tant que paramètre de notre contrôleur. Nous avons également ajouté un paramètre à notre méthode, de type <code>int</code>.</p>
+<p>Nous n'avons donc plus besoin de l'objet <code>Request</code> pour récupérer notre ID passé en paramètre d'URL, et nous pouvons directement utiliser notre repository pour récupérer la catégorie.</p>
+<p>Symfony nous permet donc de déclarer un paramètre d'URL et de le récupérer directement en paramètre du contrôleur.</p>
+<p>Ceci dit, Symfony nous donne la possibilité de faire encore plus simple et plus efficace.</p>
+<h4 id="solution---le-paramconverter">Solution - le ParamConverter</h4>
+<p>En réalité, avec Symfony, il est possible de déclarer notre route, y intégrer un paramètre d'URL comme <code>id</code>, puis de <strong>type-hinter</strong> directement le type de l'entité attendue pour que l'objet correspondant soit injecté dans notre contrôleur :</p>
+<pre class="hljs"><code><div><span class="hljs-comment">/**
+ * <span class="hljs-doctag">@Route</span>("/category/{id}", name="category_item")
+ */</span>
+<span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">item</span><span class="hljs-params">(Category $category)</span>: <span class="hljs-title">Response</span>
+</span>{
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">$this</span>-&gt;render(<span class="hljs-string">'category/item.html.twig'</span>, [
+    <span class="hljs-string">'category'</span> =&gt; $category
+  ]);
+}
+</div></code></pre>
+<p>Ici, que se passe-t-il concrètement ?</p>
+<ul>
+<li>Symfony est capable, avec le routeur, d'identifier le paramètre d'URL <code>id</code></li>
+<li>A la lecture du type-hint <code>Category</code>, il comprend que nous souhaitons récupérer un élément de la base de données</li>
+<li>Il exécute donc le <strong>ParamConverter</strong> de Doctrine, qui permet de récupérer un élément de la base de données à partir d'un paramètre d'URL</li>
+<li>Notre paramètre d'URL s'appelle <code>id</code> : Doctrine va donc chercher une <code>Category</code> qui a cet <code>id</code> (note : on aurait également pu passer un paramètre dont le nom correspond à un autre champ de <code>Category</code>, c'est comme ça que ça fonctionne)</li>
+<li>Si un enregistrement est trouvé, alors il est injecté dans le contrôleur</li>
+<li>Sinon, une erreur 404 est générée</li>
+</ul>
+<p>Nous avons donc considérablement réduit la quantité de code nécessaire pour récupérer notre categorie, rendu notre contrôleur plus clair, notre URL plus lisible, et nous générons à présent une erreur 404 lorsque l'enregistrement n'est pas trouvé, ce qui est plus rigoureux que le comportement précédent qui pouvait transmettre une catégorie <code>null</code> à notre template.</p>
+<blockquote>
+<p>Le ParamConverter permet de récupérer un élément automatiquement, selon une certaine logique, à partir d'un paramètre d'URL, et de l'injecter automatiquement dans le contrôleur</p>
+</blockquote>
+<h3 id="s%C3%A9paration-des-templates-et-inclusion">Séparation des templates et inclusion</h3>
+<p>Revenons à nos templates Twig.</p>
+<p>Au lieu d'écrire tout le contenu dans un seul template, nous pouvons séparer des bouts de templates et les importer (inclure) dans d'autres templates.</p>
+<p>Exemple pour notre liste de catégories. Nous pouvons tout à fait séparer le code qui génère la &quot;card&quot; Bootstrap :</p>
+<pre class="hljs"><code><div><span class="hljs-comment">{# templates/category/card.html.twig #}</span><span class="xml">
+<span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"card"</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"card-body"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">h5</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"card-title display-5"</span>&gt;</span>
+      </span><span class="hljs-template-variable">{{ category.name }}</span><span class="xml">
+    <span class="hljs-tag">&lt;/<span class="hljs-name">h5</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">p</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"card-text"</span>&gt;</span>
+      </span><span class="hljs-template-variable">{{ category.articles|<span class="hljs-keyword">length</span> }}</span><span class="xml"> articles
+    <span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">a</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"</span></span></span><span class="hljs-template-variable">{{ path('category_item', {'id': category.id}) }}</span><span class="xml"><span class="hljs-tag"><span class="hljs-string">"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"btn btn-primary"</span>&gt;</span>Voir<span class="hljs-tag">&lt;/<span class="hljs-name">a</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+</span></div></code></pre>
+<p>Et ensuite, l'inclure pour chaque catégorie qu'on souhaite afficher, dans la page de liste. Pour ce faire, on va utiliser la méthode <code>include</code> de Twig :</p>
+<pre class="hljs"><code><div><span class="hljs-comment">{# templates/index/index.html.twig #}</span><span class="xml">
+</span><span class="hljs-comment">{# ... #}</span><span class="xml">
+<span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4"</span>&gt;</span>
+  </span><span class="hljs-template-tag">{% <span class="hljs-name"><span class="hljs-keyword">for</span></span> category in categories %}</span><span class="xml">
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"col"</span>&gt;</span>
+    </span><span class="hljs-template-tag">{% <span class="hljs-name"><span class="hljs-keyword">include</span></span> 'category/card.html.twig' with {'category': category} %}</span><span class="xml">
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+  </span><span class="hljs-template-tag">{% <span class="hljs-name">else</span> %}</span><span class="xml">
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>Aucune catégorie trouvée<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+  </span><span class="hljs-template-tag">{% <span class="hljs-name"><span class="hljs-keyword">endfor</span></span> %}</span><span class="xml">
+<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+</span><span class="hljs-comment">{# ... #}</span><span class="xml">
+</span></div></code></pre>
+<blockquote>
+<p>Attention au chemin vers le template, il est toujours relatif à votre dossier racine de templates, défini dans la configuration du package Twig (ici <code>templates/</code>)</p>
+</blockquote>
+<p>Nous injectons dans le template inclus la variable <code>category</code> qui y sera consommée.</p>
+<p>Nous pouvons donc réaliser notre barre de navigation de la même façon, par exemple : un template isolé représentant la barre de menu, puis dans le layout principal (fichier <code>base.html.twig</code>), une directive <code>include</code> permettant à Twig d'inclure ce template dans le fichier de base.</p>
+<h3 id="formulaires">Formulaires</h3>
+<p>La construction et la gestion d'un formulaire avec Symfony s'effectue en plusieurs étapes :</p>
+<ul>
+<li>Construction du formulaire à partir d'une classe</li>
+<li>Création du formulaire dans le contrôleur</li>
+<li>Gestion du formulaire dans le contrôleur</li>
+<li>Validation des données du formulaire</li>
+<li>Passage du formulaire à la vue, avec lequel Twig pourra afficher les champs du formulaire</li>
+</ul>
+<h4 id="construction-du-formulaire">Construction du formulaire</h4>
+<p>Le premier exemple que nous avons pris concernait la création d'une newsletter.</p>
+<p>Le but est de pouvoir présenter un formulaire simple, contenant un seul champ <code>email</code>, et permettant d'enregistrer une adresse dans une table <code>Newsletter</code>.</p>
+<blockquote>
+<p>On va donc prendre soin de créer en premier lieu l'entité chargée de recevoir ces données, puis de mettre à jour le schéma de la base de données comme vu précédemment</p>
+</blockquote>
+<p>Pour créer un formulaire dans notre projet, on peut utiliser le <code>MakerBundle</code> :</p>
+<pre class="hljs"><code><div>php bin/console make:form
+</div></code></pre>
+<blockquote>
+<p>On peut lier notre formulaire à une entité ou non, le maker nous demande si on souhaite le faire. Dans notre exemple, c'est le cas, il s'agit de l'entité <code>Newsletter</code></p>
+</blockquote>
+<p>Le maker nous génère une classe dans le dossier <code>src/Form</code>. On constate donc que nos classes de formulaires seront bien séparées du reste du code, dans un namespace <code>App\Form</code>.</p>
+<blockquote>
+<p>On suffixe les noms des classes de formulaire par <code>Type</code>, car dans Symfony tout est ce qu'on appelle un &quot;form type&quot; : les formulaires, les champs, etc...c'est plus pratique pour composer et intégrer des formulaires</p>
+</blockquote>
+<p>Dans cette classe, on retrouve une méthode essentielle : <code>buildForm</code>. C'est dans cette méthode que nous allons déclarer les différents champs de notre formulaire, et leurs propriétés :</p>
+<pre class="hljs"><code><div><span class="hljs-comment">//...</span>
+<span class="hljs-keyword">use</span> <span class="hljs-title">Symfony</span>\<span class="hljs-title">Component</span>\<span class="hljs-title">Form</span>\<span class="hljs-title">Extension</span>\<span class="hljs-title">Core</span>\<span class="hljs-title">Type</span>\<span class="hljs-title">EmailType</span>;
+<span class="hljs-keyword">use</span> <span class="hljs-title">Symfony</span>\<span class="hljs-title">Component</span>\<span class="hljs-title">Form</span>\<span class="hljs-title">Extension</span>\<span class="hljs-title">Core</span>\<span class="hljs-title">Type</span>\<span class="hljs-title">SubmitType</span>;
+<span class="hljs-comment">//...</span>
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">NewsletterType</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">AbstractType</span>
+</span>{
+  <span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">buildForm</span><span class="hljs-params">(FormBuilderInterface $builder, array $options)</span>
+  </span>{
+      $builder
+          -&gt;add(<span class="hljs-string">'email'</span>, EmailType::class)
+          -&gt;add(<span class="hljs-string">"S'inscrire"</span>, SubmitType::class)
+      ;
+  }
+  <span class="hljs-comment">// ...configureOptions, liaison du formulaire à la classe d'entité</span>
+}
+</div></code></pre>
+<p>On peut noter plusieurs choses dans la méthode <code>buildForm</code> :</p>
+<ul>
+<li>On peut utiliser l'interface fluide du type <code>FormBuilderInterface</code> pour chaîner les appels à la méthode <code>add</code></li>
+<li>Chaque champ déclaré possède un <code>Type</code> lui-même : <code>EmailType</code>, <code>SubmitType</code> dans ce cas</li>
+<li>Les classes <code>EmailType</code>, <code>SubmitType</code> sont bien issues du composant <code>Form</code> de Symfony, il faut veiller à <code>use</code> les classes du bon namespace</li>
+<li>On constate que par défaut, un formulaire ne va pas générer lui-même un bouton de soumission. C'est à nous, à la construction du formulaire, d'ajouter un champ de type <code>SubmitType</code></li>
+</ul>
+<blockquote>
+<p>Les classes <code>***Type</code> appliquées aux différents champs de notre formulaire vont permettre d'afficher correctement les champs dans le rendu Twig !</p>
+</blockquote>
+<h4 id="cr%C3%A9ation-du-formulaire">Création du formulaire</h4>
+<p>Une fois que nous disposons de notre classe <code>NewsletterType</code>, qui représente la structure de notre formulaire, nous pouvons alors construire notre formulaire dans notre contrôleur :</p>
+<pre class="hljs"><code><div><span class="hljs-comment">// Dans la méthode de contrôleur</span>
+$newsletter = <span class="hljs-keyword">new</span> Newsletter();
+$form = <span class="hljs-keyword">$this</span>-&gt;createForm(NewsletterType::class, $newsletter);
+</div></code></pre>
+<p>La méthode <code>createForm</code> est utilisable dans toute méthode d'une classe héritant de la classe abstraite <code>AbstractController</code>.</p>
+<p>Le but ici est de créer une entité vide, ainsi que le formulaire qui va être relié à cette entité.</p>
+<p>Avec la méthode <code>createForm</code>, nous spécifions le type de formulaire que nous souhaitons récupérer, et l'entité qu'il faut lier à ce formulaire.</p>
+<h4 id="gestion-du-formulaire">Gestion du formulaire</h4>
+<p>Une fois le formulaire créé, on peut gérer les données éventuellement saisies :</p>
+<pre class="hljs"><code><div>$newsletter = new Newsletter();
+$form = $this-&gt;createForm(NewsletterType::class, $newsletter);
+
+<span class="hljs-addition">+$form-&gt;handleRequest($request);</span>
+</div></code></pre>
+<p>Pour assurer la gestion du formulaire, on va exécuter une méthode <code>handleRequest</code> et lui passer en paramètre la <strong>requête entrante</strong>.</p>
+<blockquote>
+<p>Pour récupérer la requête entrante, on peut type-hinter le type <code>Request</code> du composant <code>HttpFoundation</code> de Symfony dans les paramètres de notre contrôleur</p>
+</blockquote>
+<p>Cette méthode <code>handleRequest</code> va explorer toute seule le contenu des variables POST. Si elle trouve des informations correspondant à la structure de notre formulaire, elle va alors être capable de les récupérer et les mapper directement dans l'entité !</p>
+<h4 id="validation-des-donn%C3%A9es">Validation des données</h4>
+<p>Une fois les données récupérées et mappées, il faut s'assurer qu'elles sont <strong>valides</strong>.</p>
+<p>Cette responsabilité ne relève pas du composant <code>Form</code> de Symfony mais du composant <code>Validator</code>.</p>
+<p>On va pouvoir simplement appeler, depuis le formulaire, 2 méthodes : <code>isSubmitted</code> et <code>isValid</code>, pour s'assurer que le formulaire a bien été soumis par l'utilisateur, puis que les données sont valides :</p>
+<pre class="hljs"><code><div><span class="hljs-comment">//...</span>
+$form-&gt;handleRequest($request);
+
+<span class="hljs-keyword">if</span> ($form-&gt;isSubmitted() &amp;&amp; $form-&gt;isValid()) {
+  <span class="hljs-comment">// Si tout va bien, alors on peut persister l'entité et valider les modifications en BDD</span>
+  $em-&gt;persist($newsletter);
+  $em-&gt;flush();
+}
+</div></code></pre>
+<p>Mais pour pouvoir valider les données correctement, il faut qu'on spécifie un format de validation sur nos différents champs.</p>
+<p>Par exemple, comment signifier à mon composant <code>Validator</code> que le champ <code>email</code> de mon entité <code>Newsletter</code> doit accepter des chaînes de caractère qui ont le format d'un email ?</p>
+<p>On peut poser des <strong>contraintes de validation</strong> directement au niveau de l'entité :</p>
+<pre class="hljs"><code><div><span class="hljs-comment">//...</span>
+<span class="hljs-keyword">use</span> <span class="hljs-title">Symfony</span>\<span class="hljs-title">Component</span>\<span class="hljs-title">Validator</span>\<span class="hljs-title">Constraints</span> <span class="hljs-title">as</span> <span class="hljs-title">Assert</span>;
+<span class="hljs-comment">//...</span>
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Newsletter</span>
+</span>{
+  <span class="hljs-comment">/**
+   * <span class="hljs-doctag">@ORM</span>\Column(type="string", length=255)
+   * <span class="hljs-doctag">@Assert</span>\Email
+   * <span class="hljs-doctag">@Assert</span>\NotBlank
+   */</span>
+  <span class="hljs-keyword">private</span> $email;
+
+  <span class="hljs-comment">//...</span>
+}
+</div></code></pre>
+<blockquote>
+<p>Les contraintes de validation peuvent s'appliquer sous forme d'annotation au niveau des attributs de l'entité</p>
+</blockquote>
+<p>Pour retrouver toutes les containres de validation disponibles dans Symfony, on peut consulter <a href="https://symfony.com/doc/5.4/reference/constraints.html">cette page</a>.</p>
+<blockquote>
+<p>Attention à sélectionner la bonne version de Symfony quand vous consultez la documentation. Je vous rappelle que nous utilisons ici la version 5.4, mais la dernière version majeure de Symfony est la version 6. Cela signifie que certaines choses peuvent avoir changé entre la version 5 et la version 6. Par défaut la documentation s'affiche dans la dernière version</p>
+</blockquote>
+<p>Avec l'application de contraintes de validation dans les champs de nos entités, le composant <code>Validator</code> peut détecter et remonter les erreurs de format dans le formulaire.</p>
+<h4 id="au-sujet-de-la-persistance-des-donn%C3%A9es">Au sujet de la persistance des données</h4>
+<p>Nous avons vu dans le point précédent qu'une fois qu'un formulaire a été validé, nous pouvons persister l'entité puis <code>flush</code>.</p>
+<p>Pour faire ça, nous avons utilisé une variable <code>$em</code>.</p>
+<p>Cette variable est en fait injectée directement dans le contrôleur sous forme de paramètre.</p>
+<p>Pour expliquer sommairement le fonctionnement de cette injection, nous devons parler de nouveau du système d'injection de dépendances dans Symfony.</p>
+<p>Pour injecter un service dans un contrôleur par exemple, nous avons vu que nous pouvions utiliser les <strong>type-hints</strong>.</p>
+<p>Quand on utilise un type-hint, Symfony recherche le service correspondant (la classe) dans le <strong>container de services</strong>.</p>
+<p>Ainsi, s'il trouve un service, il peut injecter une instance de celui-ci là où nous en avons besoin.</p>
+<p>Cependant, les services qui peuvent être injectés par un type-hint doivent être <strong>autowirés</strong>.</p>
+<blockquote>
+<p>Pour résumer, un service <strong>autowiré</strong>, qui utilise donc l'<strong>autowiring</strong> de Symfony, peut donc être type-hinté dans une méthode de contrôleur, pour notre exemple. Nous verrons plus tard que nous pouvons également type-hinter un service dans le constructeur d'une classe</p>
+</blockquote>
+<p>La question à se poser est donc la suivante : pour pouvoir communiquer avec ma base de données, quel type de classe vais-je pouvoir type-hinter dans les paramètres de mon contrôleur ?</p>
+<p>Avec la console de Symfony, nous pouvons explorer les services autowirés.</p>
+<p>Ici, nous voulons un <code>entity manager</code>, un gestionnaire d'entités.</p>
+<p>Nous allons utiliser la commande <code>debug:autowiring</code>. Nous pouvons lui passer un argument de recherche pour qu'il affiche le ou les types correspondants :</p>
+<pre class="hljs"><code><div>php bin/console debug:autowiring entitymanager
+</div></code></pre>
+<p>Et en sortie, Symfony nous affiche :</p>
+<pre class="hljs"><code><div>Autowirable Types
+=================
+
+ The following classes &amp; interfaces can be used as <span class="hljs-built_in">type</span>-hints when autowiring:
+ (only showing classes/interfaces matching entitymanager)
+
+ EntityManager interface
+ Doctrine\ORM\EntityManagerInterface (doctrine.orm.default_entity_manager)
+</div></code></pre>
+<p>Nous allons donc pouvoir type-hinter l'interface <code>EntityManagerInterface</code> du package Doctrine :</p>
+<pre class="hljs"><code><div><span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">index</span><span class="hljs-params">(
+  Request $request,
+  EntityManagerInterface $em
+)</span>: <span class="hljs-title">Response</span> </span>{
+  $newsletter = <span class="hljs-keyword">new</span> Newsletter();
+  $form = <span class="hljs-keyword">$this</span>-&gt;createForm(NewsletterType::class, $newsletter);
+
+  $form-&gt;handleRequest($request);
+
+  <span class="hljs-keyword">if</span> ($form-&gt;isSubmitted() &amp;&amp; $form-&gt;isValid()) {
+    $em-&gt;persist($newsletter);
+    $em-&gt;flush();
+  }
+  <span class="hljs-comment">//...</span>
+}
+</div></code></pre>
+<p>Au passage, nous retrouvons notre autre type-hint, <code>Request</code>.</p>
+<p>Le rôle du container de services est donc d'identifier nos type-hints et nous fournir les services correspondants.</p>
+<blockquote>
+<p>Nous ne détaillerons pas dans ce module la raison pour laquelle nous devons injecter une interface et non une classe pour l'entity manager</p>
+</blockquote>
+<p>Dans notre application, la configuration par défaut rend tous nos services autowirés. C'est pourquoi nous pouvons injecter nos repositories directement dans nos contrôleurs, sans configurer manuellement quoi que ce soit.</p>
+<blockquote>
+<p>Note : depuis la version 5 de Symfony, les repositories automatiquement créés par Symfony lorsqu'on crée une entité incluent une méthode <code>add</code> et une méthode <code>remove</code> permettant d'effectuer automatiquement un <code>persist</code> sur une entité, et, si besoin, un <code>flush</code>. On aurait donc également pu type-hinter notre <code>NewsletterRepository</code> afin de persister l'entité depuis le formulaire. L'exemple avec <code>EntityManagerInterface</code> est une alternative nous permettant d'évoquer le sujet de l'autowiring, tout simplement</p>
+</blockquote>
+<h4 id="affichage-du-formulaire-dans-un-template-twig">Affichage du formulaire dans un template Twig</h4>
+<p>Pour afficher notre formulaire, il faut que notre contrôleur transmette un objet <code>FormView</code> à notre vue. En réalité, si nous utilisons la méthode <code>renderForm</code> dans un contrôleur, Symfony se chargera automatiquement de créer l'objet :</p>
+<pre class="hljs"><code><div>public function index(Request $request, EntityManagerInterface $em): Response
+{
+  $newsletter = new Newsletter();
+  $form = $this-&gt;createForm(NewsletterType::class, $newsletter);
+
+  $form-&gt;handleRequest($request);
+
+  if ($form-&gt;isSubmitted() &amp;&amp; $form-&gt;isValid()) {
+    $newsletter-&gt;setCreated(new DateTime());
+    $em-&gt;persist($newsletter);
+    $em-&gt;flush();
+  }
+
+<span class="hljs-addition">+ return $this-&gt;renderForm('newsletter/register.html.twig', [</span>
+<span class="hljs-addition">+   'form' =&gt; $form</span>
+<span class="hljs-addition">+ ]);</span>
+}
+</div></code></pre>
+<p>Ensuite, dans la vue, on peut afficher le formulaire avec les méthodes Twig disponibles.</p>
+<p>La plus basique est la méthode <code>form</code> :</p>
+<pre class="hljs"><code><div><span class="hljs-template-variable">{{ form(form) }}</span><span class="xml">
+</span></div></code></pre>
+<p>Cette méthode va simplement générer le code HTML pour <strong>tout</strong> le formulaire.</p>
+<p>Si on veut avoir plus de contrôle sur la manière d'afficher notre formulaire, on peut utiliser les <a href="https://symfony.com/doc/5.4/form/form_customization.html">méthodes personnalisées</a> également à disposition.</p>
+<p>Vous trouverez sur cette page toutes les méthodes d'extension Twig créées par Symfony pour afficher un libellé de champ, un champ seul, etc...ceci peut vous permettre d'avoir plus de contrôle sur la façon dont vous souhaitez afficher votre formulaire.</p>
+<h4 id="appliquer-un-th%C3%A8me-au-formulaire">Appliquer un thème au formulaire</h4>
+<p>On peut utiliser différents thèmes fournis par Symfony. Dans notre cas, vu qu'on utilise Bootstrap, on peut indiquer à Twig d'utiliser le thème correspondant.</p>
+<p>Ainsi, dans la configuration du package Twig (<code>config/packages/twig.yaml</code>) :</p>
+<pre class="hljs"><code><div><span class="hljs-attr">twig:</span>
+  <span class="hljs-comment"># ...</span>
+  <span class="hljs-attr">form_themes:</span> <span class="hljs-string">["bootstrap_5_layout.html.twig"]</span>
+</div></code></pre>
+<p>Avant l'application du thème :</p>
+<p><img src="file:///home/lucas/symfony/ynov_b2_a_2022/docs/form_avant_bootstrap.png" alt="Avant thème Bootstrap" title="Avant thème Bootstrap"></p>
+<p>Après l'application du thème :</p>
+<p><img src="file:///home/lucas/symfony/ynov_b2_a_2022/docs/form_apres_bootstrap.png" alt="Après thème Bootstrap" title="Après thème Bootstrap"></p>
+<h3 id="les-messages-flash">Les messages flash</h3>
+<p>Dans n'importe quel contrôleur héritant de la classe <code>AbstractController</code>, nous disposons de méthodes utilitaires nous permettant par exemple de rediriger l'utilisateur vers une nouvelle page (<code>redirectToRoute</code>), rendre un template (<code>render</code>), rendre un template contenant un formulaire (<code>renderForm</code>), etc...</p>
+<p>Lors de la réalisation d'un formulaire, il est toujours utile d'assurer un retour à l'utilisateur, sous forme de message, ou notification.</p>
+<p>Un système mis à disposition par Symfony, et largement utilisé dans le cas des formulaires, est celui des <strong>messages flash</strong>.</p>
+<p>Les messages flash ont un fonctionnement très simple :</p>
+<ul>
+<li>Lorsqu'on ajoute un message flash depuis un contrôleur, celui-ci s'ajoute en session</li>
+<li>Si on souhaite afficher un message flash dans un template Twig, on peut utiliser la variable globale <code>app</code> fournie par Symfony</li>
+<li>Une fois le message affiché, il est <strong>automatiquement</strong> supprimé. C'est donc idéal pour l'affichage de notifications, qui n'ont besoin d'être consommées qu'une fois</li>
+</ul>
+<p>On peut ajouter un message avec n'importe quel type, pour le classer dans une catégorie ou une autre.</p>
+<p>Exemple complet issu de notre formulaire d'enregistrement de newsletter :</p>
+<blockquote>
+<p><code>src/Controller/NewsletterController.php</code></p>
+</blockquote>
+<pre class="hljs"><code><div><span class="hljs-keyword">public</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">register</span><span class="hljs-params">(
+    Request $request,
+    EntityManagerInterface $em,
+    NewsletterSubscribed $notificationService
+)</span>: <span class="hljs-title">Response</span> </span>{
+    $newsletter = <span class="hljs-keyword">new</span> Newsletter();
+    $form = <span class="hljs-keyword">$this</span>-&gt;createForm(NewsletterType::class, $newsletter);
+
+    $form-&gt;handleRequest($request);
+    <span class="hljs-keyword">if</span> ($form-&gt;isSubmitted() &amp;&amp; $form-&gt;isValid()) {
+        $newsletter-&gt;setCreated(<span class="hljs-keyword">new</span> DateTime());
+        $em-&gt;persist($newsletter);
+        $em-&gt;flush();
+        <span class="hljs-keyword">$this</span>-&gt;addFlash(<span class="hljs-string">'success'</span>, <span class="hljs-string">'Votre email a été enregistré, merci'</span>);
+        $notificationService-&gt;sendConfirmation($newsletter);
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">$this</span>-&gt;redirectToRoute(<span class="hljs-string">'app_index'</span>);
+    }
+
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">$this</span>-&gt;renderForm(<span class="hljs-string">'newsletter/register.html.twig'</span>, [
+        <span class="hljs-string">'form'</span> =&gt; $form
+    ]);
+}
+</div></code></pre>
+<p>Dans un premier temps, on enregistre un message flash. Il va donc être inscrit en session.</p>
+<p>Dans un second temps (voir ci-dessous), dans un template, on va utiliser la variable <code>app</code> et plus précisément <code>app.flashes</code>, pour accéder aux messages flash :</p>
+<blockquote>
+<p><code>templates/base.html.twig</code></p>
+</blockquote>
+<pre class="hljs"><code><div><span class="hljs-comment">{# FLASH MESSAGES #}</span><span class="xml">
+</span><span class="hljs-template-tag">{% <span class="hljs-name"><span class="hljs-keyword">for</span></span> type, messages in app.flashes(['success', 'info', 'warning', 'danger']) %}</span><span class="xml">
+  </span><span class="hljs-template-tag">{% <span class="hljs-name"><span class="hljs-keyword">for</span></span> message in messages %}</span><span class="xml">
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"alert alert-</span></span></span><span class="hljs-template-variable">{{ type }}</span><span class="xml"><span class="hljs-tag"><span class="hljs-string">"</span> <span class="hljs-attr">role</span>=<span class="hljs-string">"alert"</span>&gt;</span>
+      </span><span class="hljs-template-variable">{{ message }}</span><span class="xml">
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+  </span><span class="hljs-template-tag">{% <span class="hljs-name"><span class="hljs-keyword">endfor</span></span> %}</span><span class="xml">
+</span><span class="hljs-template-tag">{% <span class="hljs-name"><span class="hljs-keyword">endfor</span></span> %}</span><span class="xml">
+</span></div></code></pre>
+<blockquote>
+<p>Note sur l'utilisation de <code>app.flashes</code> : on peut, comme on le fait ci-dessus, passer plusieurs types de messages à <code>app.flashes</code>, puis boucler à la fois sur les types, et, dans une boucle imbriquée, sur les messages de chaque type. C'est pourquoi à chaque itération de la première boucle, on aura chaque type de message, mais également une collection de messages sur lesquels on pourra boucler dans la seconde boucle</p>
+</blockquote>
+<p>Plus de détails pour les messages flash <a href="https://symfony.com/doc/5.4/controller.html#flash-messages">ici</a>.</p>
+<p>Plus de détails sur la variable <code>app</code> <a href="https://symfony.com/doc/5.4/templates.html#the-app-global-variable">ici</a>.</p>
+<h3 id="ecrire-un-service--envoi-demail">Ecrire un service : envoi d'email</h3>
+<p>Il existe beaucoup de méthodes différentes pour implémenter la fonctionnalité qui va suivre. Le but ici est d'introduire la manière dont on peut écrire un service dans une classe PHP</p>
+
+</body>
+</html>

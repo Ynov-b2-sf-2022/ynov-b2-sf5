@@ -1168,3 +1168,265 @@ Avant l'application du thème :
 Après l'application du thème :
 
 ![Après thème Bootstrap](docs/form_apres_bootstrap.png "Après thème Bootstrap")
+
+### Les messages flash
+
+Dans n'importe quel contrôleur héritant de la classe `AbstractController`, nous disposons de méthodes utilitaires nous permettant par exemple de rediriger l'utilisateur vers une nouvelle page (`redirectToRoute`), rendre un template (`render`), rendre un template contenant un formulaire (`renderForm`), etc...
+
+Lors de la réalisation d'un formulaire, il est toujours utile d'assurer un retour à l'utilisateur, sous forme de message, ou notification.
+
+Un système mis à disposition par Symfony, et largement utilisé dans le cas des formulaires, est celui des **messages flash**.
+
+Les messages flash ont un fonctionnement très simple :
+
+- Lorsqu'on ajoute un message flash depuis un contrôleur, celui-ci s'ajoute en session
+- Si on souhaite afficher un message flash dans un template Twig, on peut utiliser la variable globale `app` fournie par Symfony
+- Une fois le message affiché, il est **automatiquement** supprimé. C'est donc idéal pour l'affichage de notifications, qui n'ont besoin d'être consommées qu'une fois
+
+On peut ajouter un message avec n'importe quel type, pour le classer dans une catégorie ou une autre.
+
+Exemple complet issu de notre formulaire d'enregistrement de newsletter :
+
+> `src/Controller/NewsletterController.php`
+
+```php
+public function register(
+    Request $request,
+    EntityManagerInterface $em
+): Response {
+    $newsletter = new Newsletter();
+    $form = $this->createForm(NewsletterType::class, $newsletter);
+
+    $form->handleRequest($request);
+    if ($form->isSubmitted() && $form->isValid()) {
+        $newsletter->setCreated(new DateTime());
+        $em->persist($newsletter);
+        $em->flush();
+        $this->addFlash('success', 'Votre email a été enregistré, merci');
+        return $this->redirectToRoute('app_index');
+    }
+
+    return $this->renderForm('newsletter/register.html.twig', [
+        'form' => $form
+    ]);
+}
+```
+
+Dans un premier temps, on enregistre un message flash. Il va donc être inscrit en session.
+
+Dans un second temps (voir ci-dessous), dans un template, on va utiliser la variable `app` et plus précisément `app.flashes`, pour accéder aux messages flash :
+
+> `templates/base.html.twig`
+
+```twig
+{# FLASH MESSAGES #}
+{% for type, messages in app.flashes(['success', 'info', 'warning', 'danger']) %}
+  {% for message in messages %}
+    <div class="alert alert-{{ type }}" role="alert">
+      {{ message }}
+    </div>
+  {% endfor %}
+{% endfor %}
+```
+
+> Note sur l'utilisation de `app.flashes` : on peut, comme on le fait ci-dessus, passer plusieurs types de messages à `app.flashes`, puis boucler à la fois sur les types, et, dans une boucle imbriquée, sur les messages de chaque type. C'est pourquoi à chaque itération de la première boucle, on aura chaque type de message, mais également une collection de messages sur lesquels on pourra boucler dans la seconde boucle
+
+Plus de détails pour les messages flash [ici](https://symfony.com/doc/5.4/controller.html#flash-messages).
+
+Plus de détails sur la variable `app` [ici](https://symfony.com/doc/5.4/templates.html#the-app-global-variable).
+
+### Ecrire un service : envoi d'email
+
+Il existe beaucoup de méthodes différentes pour implémenter la fonctionnalité qui va suivre. Le but ici est d'introduire la manière dont on peut écrire un service dans une classe PHP, et l'utiliser ensuite au sein d'un contrôleur.
+
+Dans notre fonctionnalité d'enregistrement d'email à la newsletter, on souhaite envoyer un email à l'utilisateur pour lui indiquer que son email a été enregistré et le remercier.
+
+Symfony nous propose un composant `symfony/mailer` pour envoyer des emails. Ce qui tombe bien, c'est qu'en installant Symfony comme un framework, en mode `webapp` et non API simple, ce composant est déjà intégré à notre application : dans les dépendances de votre application, vous pouvez retrouver le composant :
+
+> composer.json
+
+```json
+{
+  // ...
+  "require": {
+    // ...
+    "symfony/mailer": "5.4.*",
+    // ...
+  }
+  // ...
+}
+```
+
+#### Identifier le type injectable
+
+A l'aide de la console applicative (`php bin/console`), on peut demander au container de Symfony de nous afficher les services disponibles concernant le mot-clé "Mailer" :
+
+```bash
+php bin/console debug:container Mailer
+```
+
+Dans la liste affichée, on retrouve plein de services incluant le mot-clé. Dans un premier temps, affichons le détail du service ayant pour nom "mailer" en tapant son numéro :
+
+![Mailer service infos](docs/mailer_service_infos.png "Mailer service infos")
+
+On constate que la classe concernée se trouve bien dans le composant `symfony/mailer`, ce serait donc un service qu'on souhaiterait injecter dans notre contrôleur.
+
+Par ailleurs, son identifiant de service est `mailer.mailer`.
+
+Mais ce service est indiqué comme n'étant pas **autowiré**. On ne va donc pas l'injecter directement en tant que **type-hint** dans notre contrôleur.
+
+Pour savoir quel type on peut **type-hinter**, on peut également demander à la console applicative quel type est disponible, avec le mot-clé "mailer" et la commande suivante :
+
+```bash
+php bin/console debug:autowiring Mailer
+```
+
+Dans la liste affichée, on trouve l'élément suivant :
+
+```bash
+Autowirable Types
+=================
+
+ The following classes & interfaces can be used as type-hints when autowiring:
+ (only showing classes/interfaces matching Mailer)
+ 
+ Interface for mailers able to send emails synchronous and/or asynchronous.
+ Symfony\Component\Mailer\MailerInterface (mailer.mailer)
+```
+
+Le type `Symfony\Component\Mailer\MailerInterface` est indiqué comme le type à **type-hinter** pour envoyer des emails. Par ailleurs, on voit que le service associé est précisément `mailer.mailer`, le service que nous avons identifié juste avant.
+
+Une fois que le type a été identifié, on peut alors l'utiliser dans le contrôleur :
+
+```php
+public function register(
+    Request $request,
+    EntityManagerInterface $em,
+    MailerInterface $mailer
+): Response {
+}
+```
+
+Pour construire un email et l'envoyer, on peut ensuite se référer à la [documentation du composant mailer](https://symfony.com/doc/5.4/mailer.html#creating-sending-messages).
+
+Pour construire des emails avec une mise en forme plus avancée (templates Twig par exemple), consulter [cette section de la documentation](https://symfony.com/doc/5.4/mailer.html#html-content).
+
+#### Déplacer la logique dans un service applicatif
+
+On va créer un service applicatif qui se chargera d'envoyer l'email à partir d'une instance de `Newsletter`.
+
+On va donc créer une classe dans le dossier `src/`, là où se trouve la logique de notre application. On va même créer un namespace `Mail`, et créer le service dans le fichier `src/Mail/NewsletterSubscribed.php`.
+
+Ce service sera donc une classe, nommée comme le fichier, et présentant une méthode `sendConfirmation` :
+
+```php
+class NewsletterSubscribed
+{
+  public function sendConfirmation(Newsletter $newsletter)
+  {
+    $email = (new Email())
+      ->from("admin@ynov-corp.com")
+      ->to($newsletter->getEmail())
+      ->subject("Inscription à la newsletter")
+      ->text("Votre email " . $newsletter->getEmail() . " a bien été enregistré, merci");
+
+    $mailer->send($email);
+  }
+}
+
+```
+
+> On a déplacé ici la logique de construction et d'envoi d'email qui se trouvait au préalable dans le contrôleur
+
+##### Injecter le service Mailer dans un service
+
+Nous avons déjà identifié que le type que nous pouvons **type-hinter** est `MailerInterface`. Ceci dit, l'injection de dépendances directement dans une méthode ne fonctionne que dans les contrôleurs.
+
+Si on se trouve dans un service séparé, alors il va falloir procéder à une injection de dépendances **par constructeur**.
+
+Le principe est simple : tout comme nous avons pu type-hinter un type dans une méthode de contrôleur, pour indiquer au container de services de quel type nous avions besoin, nous allons pouvoir type-hinter un type dans le constructeur d'un service. Ainsi, le container va faire en sorte de nous fournir l'instance de service correspondante, dont on pourra faire ce qu'on veut. Ici pour nous, l'idée va donc être de déclarer un attribut privé correspondant à ce service, et lors de la construction, placer le service fourni par le container dans cet attribut :
+
+```php
+class NewsletterSubscribed
+{
+  private $mailer;
+
+  public function __construct(MailerInterface $mailer)
+  {
+    $this->mailer = $mailer;
+  }
+
+  //...
+}
+```
+
+Par la suite, quand on va vouloir appeler la méthode `sendConfirmation`, on pourra alors utiliser l'attribut de notre classe :
+
+```diff
+public function sendConfirmation(Newsletter $newsletter)
+{
+  //...
+
+-  $mailer->send($email);
++  $this->mailer->send($email);
+}
+```
+
+Une fois que notre service est prêt, nous devons alors l'utiliser dans notre contrôleur, en lieu et place de la `MailerInterface` précédemment utilisée. Ce qui tombe bien, c'est qu'avec la configuration par défaut de Symfony, **tous nos services applicatifs sont autowirés** :
+
+> config/services.yaml
+
+```yaml
+services:
+    # default configuration for services in *this* file
+    _defaults:
+      autowire: true # Automatically injects dependencies in your services.
+```
+
+On peut également vérifier que notre service est disponible en tant que type-hint avec la console :
+
+```bash
+php bin/console debug:autowiring Newsletter --all
+```
+
+```bash
+Autowirable Types
+=================
+
+ The following classes & interfaces can be used as type-hints when autowiring:
+ (only showing classes/interfaces matching Newsletter)
+ 
+ App\Controller\NewsletterController
+ 
+ App\Form\NewsletterType
+ 
+ App\Mail\NewsletterSubscribed
+ 
+ App\Repository\NewsletterRepository
+```
+
+Notre service étant disponible, nous pouvons alors le type-hinter dans le contrôleur :
+
+```php
+public function register(
+    Request $request,
+    EntityManagerInterface $em,
+    NewsletterSubscribed $notificationService
+): Response {
+  //...
+
+  if ($form->isSubmitted() && $form->isValid()) {
+      //Enregistrer l'entité...
+
+      // Utilisation du service qu'on a type-hinté
+      $notificationService->sendConfirmation($newsletter);
+      //...
+  }
+
+  return $this->renderForm('newsletter/register.html.twig', [
+      'form' => $form
+  ]);
+}
+```
+
+> Note : l'injection de dépendances par constructeur fonctionne également dans une classe de contrôleurs. Cela peut être utile si vous consommez la même dépendance dans plusieurs contrôleurs (donc plusieurs méthodes), en déplaçant l'injection au moment de l'instanciation de la classe de contrôleurs
