@@ -4,14 +4,38 @@ namespace App\DataFixtures;
 
 use App\Entity\Article;
 use App\Entity\Category;
+use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Faker;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class AppFixtures extends Fixture
 {
+    private $adminEmail;
+    private $passwordHasher;
+
+    public function __construct(
+        string $adminEmail,
+        UserPasswordHasherInterface $passwordHasher
+    ) {
+        $this->adminEmail = $adminEmail;
+        $this->passwordHasher = $passwordHasher;
+    }
+
     public function load(ObjectManager $manager): void
     {
+        $user = new User();
+        $user->setEmail($this->adminEmail)
+            ->setRoles(["ROLE_ADMIN"]);
+        $user->setPassword($this->passwordHasher->hashPassword(
+            $user,
+            "12345"
+        ));
+
+        $manager->persist($user);
+        $manager->flush();
+
         $faker = Faker\Factory::create('fr_FR');
 
         $categories = [];
