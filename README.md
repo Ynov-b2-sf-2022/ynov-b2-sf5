@@ -1430,3 +1430,88 @@ public function register(
 ```
 
 > Note : l'injection de dépendances par constructeur fonctionne également dans une classe de contrôleurs. Cela peut être utile si vous consommez la même dépendance dans plusieurs contrôleurs (donc plusieurs méthodes), en déplaçant l'injection au moment de l'instanciation de la classe de contrôleurs
+
+### Les paramètres de configuration
+
+Le container de services de Symfony contient des services, évidemment, mais il peut également contenir des [**paramètres applicatifs**](https://github.com/symfony/dependency-injection/blob/5.4/ContainerInterface.php#L70).
+
+Dans le fichier `config/services.yaml`, qui contient la configuration des services, on peut également trouver une section de configuration `parameters`, vide par défaut :
+
+```yaml
+parameters:
+
+services:
+  # default configuration for services in *this* file
+  _defaults:
+      autowire: true
+```
+
+Dans le service d'envoi d'email qu'on vient d'écrire, on indique une adresse d'envoi ("admin@ynov-corp.com").
+
+La question devient : comment éviter de répéter cette adresse email au sein de l'application, dans tous les endroits où nous aurons besoin d'envoyer des emails automatiques ?
+
+Nous pouvons déplacer la déclaration de cette variable en tant que **paramètre**, dans le fichier `config/services.yaml` :
+
+```yaml
+parameters:
+  app.admin_email: "admin@ynov-corp.com"
+
+services:
+  # ...
+```
+
+> En quoi ce type de donnée diffère des variables d'environnement ? Tout simplement parce que d'un environnement à l'autre, l'email d'administration utilisé pour l'envoi des emails automatiques ne va pas changer, c'est une donnée qui concerne l'application, pas l'environnement d'exécution.
+---
+> Il va changer en fonction de l'environnement dans votre application ? Alors passez-le en variable d'environnement 😄
+
+Par la suite, nous aimerions pouvoir disposer de cette variable dans nos services. Nous pouvons alors l'**injecter** dans le constructeur :
+
+```php
+class NewsletterSubscribed
+{
+  private $mailer;
+  private $adminEmail;
+
+  public function __construct(MailerInterface $mailer, string $adminEmail)
+  {
+    $this->mailer = $mailer;
+    $this->adminEmail = $adminEmail;
+  }
+}
+```
+
+> A ce stade-là, nous nous contentons simplement de définir notre service en indiquant, dans le constructeur, qu'il lui faudra une `string $adminEmail` lors de sa construction. L'autowiring tel que vu précédemment sur les services ne fonctionne pas pour les paramètres
+
+#### Configuration manuelle du service
+
+Au niveau du fichier `config/services.yaml`, on peut décider de configurer manuellement le service, afin de faire en sorte que le paramètre `app.admin_email` soit automatiquement fourni à sa construction :
+
+```yaml
+App\Mail\NewsletterSubscribed:
+  arguments:
+    $adminEmail: '%app.admin_email%'
+```
+
+Ainsi, lors de la construction du service, la valeur du paramètre applicatif sera automatiquement fournie au constructeur, pour le paramètre `$adminEmail`.
+
+#### Configuration automatique pour tous les services
+
+Cela peut être intéressant de configurer manuellement un service, mais le but initial, quand on a passé cette variable en tant que paramètre applicatif, c'était de pouvoir l'utiliser dans tous les services qui en ont besoin (aujourd'hui ou plus tard).
+
+Ainsi, on essayera d'éviter de se retrouver dans une situation qui nous verra obligés, à chaque création de service qui va envoyer des emails, de configurer manuellement ce service pour pouvoir disposer de la variable `app.admin_email`...
+
+On peut également configurer le container pour qu'il _lie_ automatiquement un argument de constructeur dans un service à une certaine valeur :
+
+```yaml
+services:
+  # default configuration for services in *this* file
+  _defaults:
+    autowire: true      # Automatically injects dependencies in your services.
+    autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+    bind:
+      string $adminEmail: '%app.admin_email%'
+```
+
+> On aura noté l'ajout du type `string`, également possible pour pouvoir être encore plus précis dans la définition du paramètre auquel lier la valeur
+
+A présent, tout service déclarant un paramètre `string $adminEmail` dans son constructeur verra automatiquement injectée la valeur se trouvant dans `app.admin_email`.
