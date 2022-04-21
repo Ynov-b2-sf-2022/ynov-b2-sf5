@@ -1516,6 +1516,20 @@ services:
 
 A présent, tout service déclarant un paramètre `string $adminEmail` dans son constructeur verra automatiquement injectée la valeur se trouvant dans `app.admin_email`.
 
+### Un CRUD pour une entité
+
+> CRUD = Create/Read/Update/Delete
+
+Avec le Maker, il est possible de générer une interface d'administration complète pour une entité :
+
+```bash
+php bin/console make:crud
+```
+
+La console demandera le nom de l'entité concernée, afin de créer une classe de contrôleurs complète contenant les contrôleurs nécessaires, à la création, visualisation, modification et suppression de données.
+
+> La commande du Maker crée automatiquement un `FormType` concernant notre entité. Attention à bien adapter le code de ce `FormType`, car il est possible qu'il ne fonctionne pas par défaut ! Il faudra adapter les différents `Type` que vous souhaitez utiliser suivant les attributs de votre entité, puisque la commande n'assigne pas de `Type` par défaut
+
 ### Les assets
 
 A l'installation de notre projet Symfony, un package **Webpack Encore** a été installé automatiquement.
@@ -1555,3 +1569,159 @@ On peut à présent relancer le serveur avec `symfony serve --no-tls`, et vérif
 
 - Plus d'informations sur le composant Asset [ici](https://symfony.com/doc/5.4/components/asset.html)
 - Si vous souhaitez utiliser Webpack Encore, c'est [par ici](https://symfony.com/doc/5.4/frontend.html)
+
+### Sécurité
+
+#### Utilisateurs
+
+Dans beaucoup d'applications, on a besoin d'authentifier des utilisateurs.
+
+Symfony fournit pour cela un composant `security` qui va permettre de gérer l'authentification mais également les autorisations (ou contrôles d'accès).
+
+Pour introduire une entité utilisateur dans l'application, on pourrait utiliser le Maker avec la commande `php bin/console make:entity`.
+
+Cependant, Symfony nous fournit la commande `php bin/console make:user` pour créer une entité utilisateur compatible avec le composant de sécurité de Symfony.
+
+Cette commande posera tout un tas de questions relatives à la manière dont nous souhaitons intégrer des utilisateurs dans notre application.
+
+Une fois créée, l'entité est effectivement différente d'une entité classique : elle implémente 2 interfaces `UserInterface` et `PasswordAuthenticatedUserInterface`.
+
+Ces interfaces définissent donc un contrat d'implémentation, qui a été fixé par les développeurs qui ont réalisé le composant de sécurité.
+
+Elles forcent donc l'entité utilisateur à implémenter des méthodes particulières, qui seront ensuite consommées par le composant de sécurité.
+
+On trouvera par exemple des méthodes comme `getRoles()` ou `getPassword()`.
+
+> On remarquera que Symfony gère les rôles d'un utilisateur dans un tableau (`array`). En base de données, cela se représentera sous forme d'un champ `json`
+
+Si on souhaite ajouter des champs supplémentaires dans notre utilisateur, on peut tout à fait réutiliser la commande `make:entity` après avoir exécuté `make:user`. La commande `make:user` ne fait que créer un utilisateur "de base", compatible avec le composant de sécurité. Mais cet utilisateur est bien une entité. On aura donc tout le loisir d'y ajouter des attributs supplémentaires, propres à notre application.
+
+Enfin, comme nous l'avons déjà fait auparavant lors de la création d'une entité, on devra créer une migration puis l'exécuter.
+
+Comme lorsque nous créons une entité classique, la création d'une entité utilisateur, nommée `User` dans notre cas, déclenche la création automatique d'une classe `UserRepository`.
+
+Par ailleurs, dans le fichier de configuration du composant de sécurité, situé dans `config/packages/security.yaml`, la commande `make:user` a automatiquement ajouté les lignes suivantes :
+
+```yaml
+security:
+  # ...
+
+  providers:
+    app_user_provider:
+      entity:
+        class: App\Entity\User
+        property: email # <-- si nous avons choisi "email" comme nom de champ d'identification lors de l'exécution de la commande "make:user"
+```
+
+C'est l'autre intérêt de la commande `make:user`. Elle enregistre directement auprès du composant de sécurité un **fournisseur** d'utilisateurs.
+
+Ce fournisseur sera donc capable de trouver des utilisateurs, mais également, une fois authentifié, de récupérer un utilisateur depuis la session et le rafraîchir.
+
+Enfin, on aura également un `password_hasher` d'enregistré dans la configuration du composant de sécurité :
+
+```yaml
+security:
+  # ...
+  password_hashers:
+    Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
+    App\Entity\User:
+      algorithm: auto
+```
+
+> La valeur "auto" permet de sélectionner le meilleur algorithme du moment. Par exemple en 5.4 cela va sélectionner bcrypt automatiquement
+
+#### Authentification
+
+Maintenant que nous disposons d'utilisateurs dans notre base de données, il faut pouvoir les authentifier.
+
+Tout comme nous avons exécuté la commande `make:user`, on va pouvoir exécuter une autre commande `make:auth` en choisissant `Form Login` pour générer automatiquement un formulaire de login et un `Authenticator`.
+
+Quand on exécute cette commande, le Maker va automatiquement enregistrer notre authentification derrière un **pare-feu** nommé main :
+
+> config/packages/security.yaml
+
+```yaml
+security:
+  firewalls:
+    dev:
+      pattern: ^/(_(profiler|wdt)|css|images|js)/
+      security: false
+    main:
+      lazy: true
+      provider: app_user_provider
+      custom_authenticator: App\Security\AppAuthenticator
+      logout:
+        path: app_logout
+```
+
+Les pare-feux, ou **firewalls**, permettent tout simplement de filtrer les requêtes entrantes.
+
+> Le pare-feu `dev` est uniquement là pour autoriser l'affichage du profiler et de la Web Debug Toolbar, que nous voyons en bas de notre écran lors de nos développements, avec diverses informations sur la requête/page courante
+
+On retrouve donc dans notre firewall `main` : l'authenticator, et le provider à utiliser pour les utilisateurs.
+
+> la directive `lazy` permet de n'utiliser la session PHP, pour charger l'utilisateur, que si on en a effectivement besoin. Cela peut être utile si on a besoin de vérifier les rôles de l'utilisateur, par exemple. Mais ce n'est pas toujours le cas.
+
+##### L'authenticator
+
+La commande `make:auth` a donc généré et enregistré dans `custom_authenticator` une classe `App\Security\AppAuthenticator`.
+
+Si nous nous rendons dans cette classe, on constate qu'elle hérite d'une classe abstraite `AbstractLoginFormAuthenticator`. C'est une classe fournie par Symfony pour nous permettre d'accélérer les développements. Elle contient déjà une implémentation par défaut qui nous conviendra pour ce que nous voulons faire.
+
+Notre Authenticator contient une méthode `authenticate`, qui va être tout simplement chargée de réaliser l'authentification.
+
+Ce mécanisme va être réalisé grâce à la création d'un `Passport`, qui va être retourné à l'appelant.
+
+Un `Passport` va contenir, au minimum, deux informations :
+
+- Un `UserBadge`, construit à partir d'un identifiant utilisateur, et qui servira à récupérer l'utilisateur avec le provider associé (`app_user_provider` dans notre cas, qu'on a aperçu tout à l'heure dans la configuration du composant security)
+- Des `Credentials`, ou bien informations d'identification (ici le mot de passe)
+
+Ensuite, il pourra éventuellement contenir, comme on le voit dans notre Authenticator, des badges supplémentaires venant ajouter d'autres types de données (ici le fait d'intégrer la gestion d'un jeton CSRF).
+
+Le but du `Passport` va donc être de valider les différents `Badge` ou `Credentials` qu'on lui a fournis.
+
+Par exemple, le `UserBadge` va aller chercher un utilisateur. S'il n'est pas trouvé (email inexistant), alors le badge ne sera pas résolu, pas validé. Ensuite, s'il a trouvé l'utilisateur, il va tenter de valider les `Credentials`, puis le jeton CSRF, etc...
+
+#### Contrôle d'accès
+
+Une fois qu'on est authentifié, une autre étape peut être présente : le contrôle d'accès.
+
+Disons par exemple qu'on veuille générer un CRUD pour nos articles.
+
+La commande `make:crud` nous génère la classe de contrôleurs et les vues pour gérer nos articles.
+
+Mais par la suite, nous voulons restreindre l'accès ce CRUD uniquement aux utilisateur administrateurs.
+
+Première chose, dans la classe de contrôleurs, on peut utiliser l'annotation `Route` (ou attribut en PHP8) au niveau de la classe, afin de définir un préfixe d'URL :
+
+```php
+/**
+ * @Route("/admin/article")
+ */
+class ArticleController extends AbstractController
+{
+}
+```
+
+Tous les contrôleurs répondront donc derrière une URL commençant par `/admin/article`.
+
+Par la suite, au niveau du fichier de configuration du composant de sécurité, on va activer le contrôle d'accès sur toutes les URL qui commencent par `/admin` :
+
+> config/packages/security.yaml
+
+```yaml
+security:
+  access_control:
+    - { path: ^/admin, roles: ROLE_ADMIN }
+```
+
+A présent, lorsqu'on voudra consulter une URL commençant par `/admin`, Symfony va effectuer les actions suivantes :
+
+- Vérifier à quel pare-feu correspond la requête. Ici, quelque chose qui correspond à `/admin` va correspondre à notre pare-feu `main`
+- Sur le pare-feu, nous n'avons précisé aucun "pattern" d'URL, contrairement au pare-feu `dev`, qui indique avec `pattern: ^/(_(profiler|wdt)|css|images|js)/` qu'il correspond à toutes les URL commençant par "_profiler" ou "_wdt" ou encore "css", etc...donc par défaut nous n'aurions pas besoin de nous authentifier
+- Mais au niveau du contrôle d'accès, nous avons précisé que nous voulions restreindre tout ce qui commence par `/admin` au rôle `ROLE_ADMIN`
+- A ce moment-là, cela signifie qu'on a besoin d'avoir un utilisateur authentifié, afin de pouvoir vérifier son ou ses rôles
+- On active alors l'authenticator `AppAuthenticator`
+- Nous ne sommes pas connectés par défaut. Ainsi, l'authenticator redirige vers la page de login
+- On s'authentifie. Par la suite, si nos rôles sont corrects (si je possède le rôle "ROLE_ADMIN"), alors je peux accéder à mes pages d'administration
