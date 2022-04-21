@@ -1515,3 +1515,43 @@ services:
 > On aura noté l'ajout du type `string`, également possible pour pouvoir être encore plus précis dans la définition du paramètre auquel lier la valeur
 
 A présent, tout service déclarant un paramètre `string $adminEmail` dans son constructeur verra automatiquement injectée la valeur se trouvant dans `app.admin_email`.
+
+### Les assets
+
+A l'installation de notre projet Symfony, un package **Webpack Encore** a été installé automatiquement.
+
+Normalement, il nous permet de réaliser des interfaces en utilisant NPM et Webpack.
+
+Afin de se concentrer sur PHP et Symfony, nous utiliserons à la place le composant `asset` de Symfony. Grâce à lui, nous pourrons réaliser des CSS et des JS sans avoir besoin de mettre en oeuvre des outils supplémentaires.
+
+On va donc retirer de notre projet le composant Webpack Encore :
+
+```bash
+composer remove symfony/webpack-encore-bundle
+```
+
+Par la suite, si on veut créer une feuille de style CSS par exemple, on va créer un dossier `css` dans le dossier `public` situé à la racine du projet.
+
+Dans ce dossier, on va créer un fichier `index.css`, et pour tester le bon fonctionnement, y inscrire un code CSS de test :
+
+```css
+body {
+  background-color: #ddd;
+}
+```
+
+Enfin, pour utiliser le composant `asset` de Symfony, on va utiliser une extension Twig dans le template de base de notre application pour y intégrer notre feuille de style. Dans le fichier `base.html.twig`, dans le bloc `stylesheets` :
+
+```twig
+{% block stylesheets %}
+  {# En-dessous de la balise qui intègre Bootstrap... #}
+  <link rel="stylesheet" href="{{ asset('css/index.css') }}">
+{% endblock %}
+```
+
+On peut à présent relancer le serveur avec `symfony serve --no-tls`, et vérifier que l'arrière-plan de la page d'accueil est bien gris clair.
+
+> Pour les scripts Javascript, on pourra créer un dossier `js` dans `public` et reproduire l'opération, mais dans le bloc Twig `javascripts`
+
+- Plus d'informations sur le composant Asset [ici](https://symfony.com/doc/5.4/components/asset.html)
+- Si vous souhaitez utiliser Webpack Encore, c'est [par ici](https://symfony.com/doc/5.4/frontend.html)
